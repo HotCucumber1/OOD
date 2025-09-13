@@ -1,0 +1,40 @@
+/vendor/
+
+/composer.lock
+.phpunit.result.cache
+
+/.idea/
+/.vscode/
+/.vs/
+/.nbproject/
+/*.swp
+/*.swo
+*~
+
+.DS_Store
+Thumbs.db
+._*
+
+# Локальные конфиги (если есть)
+/.env
+/.env.local
+/.env.*.local
+!/env.example
+
+# Кэш приложения
+/var/cache/*
+!/var/cache/.gitkeep
+/var/log/*
+!/var/log/.gitkeep
+
+# Файлы сборки и деплоя
+/build/
+/phar/
+/*.phar
+
+# Тестовые файлы (если не храните в репозитории)
+/coverage/
+/clover.xml
+
+# Composer-файлы (опционально)
+/composer.phar
