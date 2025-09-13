@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Test\Unit\DuckFunctional;
 
-
 use App\Lab1\DuckFunctional\Entity\MallardDuck;
 use PHPUnit\Framework\TestCase;
 use Test\Unit\DuckFunctional\Mock\Exception\DanceMinuetAction;
