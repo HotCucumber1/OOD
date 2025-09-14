@@ -28,7 +28,6 @@ class ShapeController
     private const RECT_PARAMS_COUNT = 4;
     private const CIRCLE_PARAMS_COUNT = 3;
     private const TRIANGLE_PARAMS_COUNT = 4;
-    private const TEXT_PARAMS_COUNT = 4;
 
     private Picture $picture;
 
