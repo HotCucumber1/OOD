@@ -1,0 +1,28 @@
+AddShape sky #26deff rectangle 0 0 500 500
+AddShape house_base #8B4513 rectangle 150 300 200 150
+AddShape chimney #A9A9A9 rectangle 280 220 30 50
+AddShape roof #FF0000 triangle 150 300 350 300 250 200
+AddShape door #138b37 rectangle 220 380 60 70
+AddShape window1 #87CEEB rectangle 170 330 50 50
+AddShape window2 #87CEEB rectangle 280 330 50 50
+AddShape door_handle #FFFF00 circle 270 420 5
+AddShape smoke #D3D3D3 text 290 180 42 "OOOOOO"
+AddShape sun #FFFF00 circle 400 100 40
+AddShape grass #00FF00 rectangle 0 450 500 500
+AddShape house_name #000000 text 200 280 16 "My_House"
+AddShape flower1 #FF69B4 circle 50 430 8
+AddShape flower2 #FF1493 circle 70 440 6
+AddShape flower3 #DA70D6 circle 450 435 7
+AddShape tree_trunk #8B4513 line 400 350 400 450
+AddShape tree_crown #228B22 circle 400 330 30
+AddShape cloud1 #FFFFFF circle 100 100 20
+AddShape cloud2 #FFFFFF circle 120 90 25
+AddShape cloud3 #FFFFFF circle 140 100 18
+AddShape cloud_text #FFFFFF text 80 120 20 "fluffy"
+AddShape fence1 #A52A2A line 0 440 50 440
+AddShape fence2 #A52A2A line 10 430 10 450
+AddShape fence3 #A52A2A line 20 430 20 450
+AddShape fence4 #A52A2A line 30 430 30 450
+AddShape fence5 #A52A2A line 40 430 40 450
+AddShape path #C2B280 line 250 450 250 380
+DrawPicture
