@@ -24,6 +24,7 @@ class ShapeController
     private const DELETE_COMMAND_ARG_COUNT = 1;
     private const CHANGE_COLOR_COMMAND_ARG_COUNT = 2;
     private const DRAW_SHAPE_COMMAND_ARG_COUNT = 1;
+    private const CLONE_COMMAND_ARG_COUNT = 2;
 
     private const RECT_PARAMS_COUNT = 4;
     private const CIRCLE_PARAMS_COUNT = 3;
@@ -84,6 +85,7 @@ class ShapeController
             'ChangeShape' => $this->changeShape($params),
             'DrawShape' => $this->drawShape($params),
             'DrawPicture' => $this->drawPicture(),
+            'CloneShape' => $this->cloneShape($params),
         };
     }
 
@@ -215,6 +217,21 @@ class ShapeController
     private function drawPicture(): void
     {
         $this->picture->draw();
+    }
+
+    /**
+     * @param string[] $arguments
+     * @throws ShapeNotFoundException
+     * @throws ShapeAlreadyExistsException
+     */
+    private function cloneShape(array $arguments): void
+    {
+        self::assertArgumentsCount($arguments, self::CLONE_COMMAND_ARG_COUNT);
+
+        $sourceId = $arguments[0];
+        $newId = $arguments[1];
+
+        $this->picture->cloneShape($sourceId, $newId);
     }
 
     /**

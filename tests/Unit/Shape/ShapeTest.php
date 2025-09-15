@@ -208,4 +208,5 @@ class ShapeTest extends TestCase
         $ellipseInfo = explode(' ', $ellipse->getInfo());
         self::assertEquals('color', $ellipseInfo[0]);
     }
+
 }

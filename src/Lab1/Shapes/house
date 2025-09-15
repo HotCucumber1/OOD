@@ -26,3 +26,13 @@ AddShape fence4 #A52A2A line 30 430 30 450
 AddShape fence5 #A52A2A line 40 430 40 450
 AddShape path #C2B280 line 250 450 250 380
 DrawPicture
+CloneShape roof newRoof
+MoveShape newRoof 0 -50
+DrawShape newRoof
+CloneShape newRoof newRoof2
+MoveShape newRoof2 0 -50
+DrawShape newRoof2
+CloneShape newRoof2 newRoof3
+MoveShape newRoof3 0 -50
+DrawShape newRoof3
+List

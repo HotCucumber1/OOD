@@ -118,6 +118,46 @@ class PictureTest extends TestCase
     }
 
     /**
+     * @throws ShapeNotFoundException
+     * @throws ShapeAlreadyExistsException
+     */
+    public function testCloneShapeSuccess(): void
+    {
+        $this->picture->storeShape('new_shape1', self::getLine());
+        $this->picture->cloneShape('new_shape1', 'cloned_shape');
+
+        $this->picture->findShape('cloned_shape');
+        self::assertTrue(true);
+
+        $shapes = $this->picture->listShapes();
+        self::assertCount(2, $shapes);
+    }
+
+    /**
+     * @throws ShapeAlreadyExistsException
+     */
+    public function testCloneShapeWithNoExistedIdFail(): void
+    {
+        $this->picture->storeShape('new_shape1', self::getLine());
+
+        $this->expectException(ShapeNotFoundException::class);
+        $this->picture->cloneShape('new_shape100500', 'cloned_shape');
+    }
+
+    /**
+     * @throws ShapeNotFoundException
+     * @throws ShapeAlreadyExistsException
+     */
+    public function testCloneShapeWithNewIdThatAlreadyExistFail(): void
+    {
+        $this->picture->storeShape('new_shape1', self::getLine());
+        $this->picture->storeShape('new_shape2', self::getLine());
+
+        $this->expectException(ShapeAlreadyExistsException::class);
+        $this->picture->cloneShape('new_shape1', 'new_shape2');
+    }
+
+    /**
      * @throws ShapeAlreadyExistsException
      */
     public function testDrawAllShapesSuccess(): void

@@ -36,6 +36,7 @@ classDiagram
         +draw(CanvasInterface canvas) void
         +move(float dx, float dy) void
         +setColor(string color) void
+        +clone() Shape
         +setStrategy(ShapeStrategyInterface shapeStrategy) void
         +getInfo() string
     }

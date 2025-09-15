@@ -95,4 +95,19 @@ class Picture
         }
         return $this->shapes[$id];
     }
+
+    /**
+     * @throws ShapeNotFoundException
+     * @throws ShapeAlreadyExistsException
+     */
+    public function cloneShape(
+        string $sourceShapeId,
+        string $newShapeId,
+    ): void
+    {
+        $shape = $this->findShape($sourceShapeId);
+        $newShape = $shape->clone();
+
+        $this->storeShape($newShapeId, $newShape);
+    }
 }

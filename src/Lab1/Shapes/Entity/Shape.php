@@ -29,6 +29,11 @@ class Shape
         $this->color = $color;
     }
 
+    public function clone(): Shape
+    {
+        return clone $this;
+    }
+
     public function setStrategy(ShapeStrategyInterface $shapeStrategy): void
     {
         $this->shapeStrategy = $shapeStrategy;
