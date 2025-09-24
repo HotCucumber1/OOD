@@ -1,4 +1,6 @@
 /vendor/
+/cmake-build-debug/
+/cmake-build-release/
 
 /composer.lock
 .phpunit.result.cache

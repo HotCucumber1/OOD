@@ -5,7 +5,7 @@ template<typename T>
 class ObservableInterface
 {
 public:
-    virtual void RegisterObserver(ObserverInterface<T>& observer) = 0;
+    virtual void RegisterObserver(ObserverInterface<T>& observer, int priority) = 0;
 
     virtual void RemoveObserver(ObserverInterface<T>& observer) = 0;
 

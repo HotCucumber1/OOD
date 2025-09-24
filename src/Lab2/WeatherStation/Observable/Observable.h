@@ -1,33 +1,52 @@
 #include "ObservableInterface.h"
+#include <algorithm>
+#include <memory>
 #include <set>
+#include <unordered_map>
+#include <vector>
 
-template<typename T>
+template <typename T>
 class Observable : public ObservableInterface<T>
 {
 public:
-    using ObserverType = ObserverInterface<T>;
-    void RegisterObserver(ObserverType& observer) override
-    {
-        m_observers.insert(&observer);
-    }
+	using ObserverType = ObserverInterface<T>;
 
-    void NotifyObservers() override
-    {
-        T data = GetChangedData();
-        for (auto& observer : m_observers)
-        {
-            observer->Update(data);
-        }
-    }
+	void RegisterObserver(ObserverType& observer, int priority) override
+	{
+		auto it = m_observers.try_emplace(&observer, priority);
+		if (!it.second)
+		{
+			throw std::runtime_error("Observer with this priority already specified");
+		}
+	}
 
-    void RemoveObserver(ObserverType& observer) override
-    {
-        m_observers.erase(&observer);
-    }
+	void NotifyObservers() override
+	{
+		T data = GetChangedData();
+		std::vector<std::pair<ObserverType*, int>> prioritizedObservers(m_observers.begin(), m_observers.end());
+		
+		std::sort(prioritizedObservers.begin(), prioritizedObservers.end(), [](auto& a, auto& b) {
+			return a.second > b.second;
+		});
+
+		for (auto& observer : prioritizedObservers)
+		{
+			observer.first->Update(data);
+		}
+	}
+
+	void RemoveObserver(ObserverType& observer) override
+	{
+		if (m_observers.find(&observer) == m_observers.end())
+		{
+			throw std::runtime_error("Observer not exist");
+		}
+		m_observers.erase(&observer);
+	}
 
 protected:
-    virtual T GetChangedData() const = 0;
+	virtual T GetChangedData() const = 0;
 
 private:
-    std::set<ObserverType*> m_observers;
+	std::unordered_map<ObserverType*, int> m_observers;
 };

@@ -4,20 +4,28 @@
 
 int main()
 {
-	WeatherData wd;
+	try
+	{
+		WeatherData weatherData;
 
-	Display display;
-	wd.RegisterObserver(display);
+		Display display;
+		weatherData.RegisterObserver(display, 100);
 
-	StatsDisplay statsDisplay;
-	wd.RegisterObserver(statsDisplay);
+		StatsDisplay statsDisplay;
+		weatherData.RegisterObserver(statsDisplay, 1);
 
-	wd.SetMeasurements(3, 0.7, 760);
-	wd.SetMeasurements(4, 0.8, 761);
+		weatherData.SetMeasurements(3, 0.7, 760);
+		weatherData.SetMeasurements(4, 0.8, 761);
 
-	wd.RemoveObserver(statsDisplay);
+		weatherData.RemoveObserver(statsDisplay);
 
-	wd.SetMeasurements(10, 0.8, 761);
-	wd.SetMeasurements(-10, 0.8, 761);
+		weatherData.SetMeasurements(10, 0.8, 761);
+		weatherData.SetMeasurements(-10, 0.8, 761);
+	}
+	catch (const std::exception& exception)
+	{
+		std::cout << exception.what() << std::endl;
+		return 1;
+	}
 	return 0;
 }
