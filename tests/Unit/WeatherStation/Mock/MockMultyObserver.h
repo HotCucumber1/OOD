@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../../../src/Lab2/WeatherStation/Observer/WeatherDisplay.h"
+#include "../../../../src/Lab2/WeatherStation/Observer/Base/WeatherDisplay.h"
 
 template <typename ObservableT>
 class MockMultyObserver : public WeatherDisplay<ObservableT>

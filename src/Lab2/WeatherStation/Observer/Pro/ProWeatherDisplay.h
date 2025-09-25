@@ -1,14 +1,16 @@
 #pragma once
 
-#include "../Data/WeatherInfo.h"
-#include "ObserverInterface.h"
+#include "../../Data/WeatherInfo.h"
+#include "../../WeatherInfoPro.h"
+#include "../ObserverInterface.h"
+#include <stdexcept>
 #include <string>
 
 template <typename ObservableT>
-class WeatherDisplay : public ObserverInterface<WeatherInfo, ObservableT>
+class ProWeatherDisplay : public ObserverInterface<WeatherInfoPro, ObservableT>
 {
 public:
-	WeatherDisplay(ObservableT& subject1, ObservableT& subject2)
+	ProWeatherDisplay(ObservableT& subject1, ObservableT& subject2)
 		: m_inSubject(subject1)
 		, m_outSubject(subject2)
 	{

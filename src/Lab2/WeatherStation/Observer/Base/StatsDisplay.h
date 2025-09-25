@@ -1,9 +1,8 @@
 #pragma once
 
-#include "../Data/Statistics.h"
-#include "../Data/WeatherInfo.h"
-#include "ObserverInterface.h"
+#include "../../Data/Statistics.h"
 #include "WeatherDisplay.h"
+#include <iostream>
 #include <vector>
 
 template <typename ObservableT>
@@ -27,7 +26,7 @@ private:
 
 		for (const auto& param : m_params)
 		{
-			std::cout << "Message from <" << this->GetSource(subj) << " >:" << std::endl;
+			std::cout << "Message from <" << this->GetSource(subj) << ">:" << std::endl;
 			param.PrintInfo();
 		}
 	}

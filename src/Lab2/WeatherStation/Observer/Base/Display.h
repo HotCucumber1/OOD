@@ -1,6 +1,4 @@
 #pragma once
-#include "../Data/WeatherInfo.h"
-#include "ObserverInterface.h"
 #include "WeatherDisplay.h"
 #include <iostream>
 
@@ -16,7 +14,7 @@ public:
 private:
 	void Update(const WeatherInfo& data, const ObservableT& subj) override
 	{
-		std::cout << "Message from <" << this->GetSource(subj) << " >:" << std::endl;
+		std::cout << "Message from <" << this->GetSource(subj) << ">:" << std::endl;
 
 		std::cout << "Current Temp " << data.temperature << std::endl;
 		std::cout << "Current Hum " << data.humidity << std::endl;

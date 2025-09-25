@@ -1,6 +1,6 @@
 #include "Observable/WeatherData.h"
-#include "Observer/Display.h"
-#include "Observer/StatsDisplay.h"
+#include "Observer/Base/Display.h"
+#include "Observer/Base/StatsDisplay.h"
 
 int main()
 {
