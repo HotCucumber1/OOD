@@ -4,7 +4,7 @@
 #include "../Data/WeatherInfo.h"
 #include "Observable.h"
 
-class WeatherData : public Observable<WeatherInfo>
+class WeatherData : public Observable<WeatherInfo, WeatherData>
 {
 public:
     double GetTemperature() const;

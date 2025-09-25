@@ -1,5 +1,4 @@
 #include "../../../src/Lab2/WeatherStation/Observable/WeatherData.h"
-#include "../../../src/Lab2/WeatherStation/Observer/Display.h"
 #include "Mock/MockObserver.h"
 #include "Mock/MockPriorityObserver1.h"
 #include "Mock/MockPriorityObserver2.h"
@@ -10,7 +9,7 @@ TEST_CASE("Test register observer")
 	SECTION("Test registry non existed observer success")
 	{
 		WeatherData weatherData;
-		MockObserver observer;
+		MockObserver<WeatherData> observer;
 
 		weatherData.RegisterObserver(observer, 100);
 		REQUIRE(observer.GetCalls() == 0);
@@ -21,7 +20,7 @@ TEST_CASE("Test register observer")
 	SECTION("Test registry existed observer fail")
 	{
 		WeatherData weatherData;
-		MockObserver observer;
+		MockObserver<WeatherData> observer;
 
 		weatherData.RegisterObserver(observer, 100);
 		REQUIRE(observer.GetCalls() == 0);
@@ -34,7 +33,7 @@ TEST_CASE("Test remover observer")
 	SECTION("Test remove existed observer success")
 	{
 		WeatherData weatherData;
-		MockObserver observer;
+		MockObserver<WeatherData> observer;
 
 		weatherData.RegisterObserver(observer, 100);
 		REQUIRE(observer.GetCalls() == 0);
@@ -45,7 +44,7 @@ TEST_CASE("Test remover observer")
 	SECTION("Test remove non existed observer fail")
 	{
 		WeatherData weatherData;
-		MockObserver observer;
+		MockObserver<WeatherData> observer;
 
 		REQUIRE_THROWS(weatherData.RemoveObserver(observer));
 	}
@@ -58,8 +57,8 @@ TEST_CASE("Test observer priority")
 		std::vector<int> executionOrder;
 
 		WeatherData weatherData;
-		MockPriorityObserver1 observer1(executionOrder);
-		MockPriorityObserver2 observer2(executionOrder);
+		MockPriorityObserver1<WeatherData> observer1(executionOrder);
+		MockPriorityObserver2<WeatherData> observer2(executionOrder);
 
 		weatherData.RegisterObserver(observer1, 2);
 		weatherData.RegisterObserver(observer2, 1);

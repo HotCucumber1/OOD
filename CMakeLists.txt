@@ -15,15 +15,4 @@ add_subdirectory(src/Lab2/WeatherStation)
 
 
 
-add_executable(
-        TestPriorityObservers
-        src/Lab2/WeatherStation/Data/Statistics.cpp
-        src/Lab2/WeatherStation/Observer/Display.cpp
-        src/Lab2/WeatherStation/Observer/StatsDisplay.cpp
-        src/Lab2/WeatherStation/Observable/WeatherData.cpp
-        tests/Unit/WeatherStation/Mock/MockObserver.cpp
-        tests/Unit/WeatherStation/Mock/MockPriorityObserver1.cpp
-        tests/Unit/WeatherStation/Mock/MockPriorityObserver2.cpp
-        tests/Unit/WeatherStation/PriorityObserversTest.cpp
-)
-target_link_libraries(TestPriorityObservers PRIVATE Catch2::Catch2WithMain)
+add_subdirectory(tests/Unit/WeatherStation)

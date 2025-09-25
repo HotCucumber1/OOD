@@ -5,11 +5,11 @@
 #include <unordered_map>
 #include <vector>
 
-template <typename T>
-class Observable : public ObservableInterface<T>
+template <typename T, typename Derived>
+class Observable : public ObservableInterface<T, Derived>
 {
 public:
-	using ObserverType = ObserverInterface<T>;
+	using ObserverType = ObserverInterface<T, Derived>;
 
 	void RegisterObserver(ObserverType& observer, int priority) override
 	{
@@ -31,7 +31,7 @@ public:
 
 		for (auto& observer : prioritizedObservers)
 		{
-			observer.first->Update(data);
+			observer.first->Update(data, GetDerived());
 		}
 	}
 
@@ -42,6 +42,11 @@ public:
 			throw std::runtime_error("Observer not exist");
 		}
 		m_observers.erase(&observer);
+	}
+
+	Derived& GetDerived()
+	{
+		return static_cast<Derived&>(*this);
 	}
 
 protected:

@@ -6,21 +6,22 @@ int main()
 {
 	try
 	{
-		WeatherData weatherData;
+		WeatherData inWeatherData;
+		WeatherData outWeatherData;
 
-		Display display;
-		weatherData.RegisterObserver(display, 100);
+		Display<WeatherData> display(inWeatherData, outWeatherData);
+		inWeatherData.RegisterObserver(display, 100);
 
-		StatsDisplay statsDisplay;
-		weatherData.RegisterObserver(statsDisplay, 1);
+		StatsDisplay<WeatherData> statsDisplay(inWeatherData, outWeatherData);
+		inWeatherData.RegisterObserver(statsDisplay, 1);
 
-		weatherData.SetMeasurements(3, 0.7, 760);
-		weatherData.SetMeasurements(4, 0.8, 761);
+		inWeatherData.SetMeasurements(3, 0.7, 760);
+		inWeatherData.SetMeasurements(4, 0.8, 761);
 
-		weatherData.RemoveObserver(statsDisplay);
+		inWeatherData.RemoveObserver(statsDisplay);
 
-		weatherData.SetMeasurements(10, 0.8, 761);
-		weatherData.SetMeasurements(-10, 0.8, 761);
+		inWeatherData.SetMeasurements(10, 0.8, 761);
+		inWeatherData.SetMeasurements(-10, 0.8, 761);
 	}
 	catch (const std::exception& exception)
 	{
