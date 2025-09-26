@@ -28,7 +28,7 @@ int WeatherDataPro::GetWindDirection() const
 
 void WeatherDataPro::MeasurementsChanged()
 {
-	NotifyObservers();
+	NotifyObservers(WeatherEvent::HumidityChanged);
 }
 
 void WeatherDataPro::SetMeasurements(
