@@ -1,9 +1,10 @@
 #pragma once
 
+#include "../Data/WeatherEvent.h"
 #include "../WeatherInfoPro.h"
 #include "Observable.h"
 
-class WeatherDataPro : public Observable<WeatherInfoPro, WeatherDataPro>
+class WeatherDataPro : public Observable<WeatherInfoPro, WeatherDataPro, WeatherEvent>
 {
 public:
 	double GetTemperature() const;

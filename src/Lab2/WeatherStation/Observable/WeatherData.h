@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Data/WeatherEvent.h"
 #include "../Data/WeatherInfo.h"
 #include "Observable.h"
 
