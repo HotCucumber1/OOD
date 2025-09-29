@@ -1,6 +1,11 @@
 #include "../../../src/Lab3/Beverage/Model/Beverages/Cappuccino.h"
 #include "../../../src/Lab3/Beverage/Model/Beverages/Latte.h"
 #include "../../../src/Lab3/Beverage/Model/Beverages/Tea.h"
+
+#include "../../../src/Lab3/Beverage/Model/Condiments/Cream.h"
+#include "../../../src/Lab3/Beverage/Model/Condiments/ChocolateBar.h"
+#include "../../../src/Lab3/Beverage/Model/Condiments/Liquor.h"
+
 #include "../../../src/Lab3/Beverage/Model/Size/DoubleLatte.h"
 #include "../../../src/Lab3/Beverage/Model/Type/DyanHunTea.h"
 #include "../../../src/Lab3/Beverage/Model/Type/LyunCzinTea.h"
@@ -42,7 +47,7 @@ TEST_CASE("Create tea")
 
 TEST_CASE("Create double portion")
 {
-	SECTION("Test create double latte")
+	SECTION("Test create double latte success")
 	{
 		const auto coffee = std::make_unique<DoubleLatte>(
 			std::make_unique<Latte>()
@@ -50,11 +55,38 @@ TEST_CASE("Create double portion")
 		REQUIRE(coffee->GetDescription() == "Latte double");
 	}
 
-	SECTION("Test create double cappuccino")
+	SECTION("Test create double cappuccino success")
 	{
 		const auto coffee = std::make_unique<DoubleLatte>(
 			std::make_unique<Cappuccino>()
 			);
 		REQUIRE(coffee->GetDescription() == "Cappuccino double");
+	}
+}
+
+TEST_CASE("Create beverage with new condiment")
+{
+	SECTION("Test create with cream success")
+	{
+		const auto coffee = std::make_unique<Cream>(
+			std::make_unique<Cappuccino>()
+			);
+		REQUIRE(coffee->GetDescription() == "Cappuccino, Cream");
+	}
+
+	SECTION("Test create with chocolate bar success")
+	{
+		const auto coffee = std::make_unique<ChocolateBar>(
+			std::make_unique<Cappuccino>(), 3
+			);
+		REQUIRE(coffee->GetDescription() == "Cappuccino, Chocolate bar 3pieces");
+	}
+
+	SECTION("Test create with liquor success")
+	{
+		const auto coffee = std::make_unique<Liquor>(
+			std::make_unique<Cappuccino>(), LiquorType::Nut
+			);
+		REQUIRE(coffee->GetDescription() == "Cappuccino, Nut liquor");
 	}
 }
