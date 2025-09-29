@@ -1,0 +1,3 @@
+add_executable(TestCreateBeverage CreateBeverageTest.cpp)
+
+target_link_libraries(TestCreateBeverage PRIVATE Catch2::Catch2WithMain)

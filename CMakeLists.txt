@@ -12,7 +12,9 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(Catch2)
 
 add_subdirectory(src/Lab2/WeatherStation)
+add_subdirectory(src/Lab3/Beverage)
 
 
 
 add_subdirectory(tests/Unit/WeatherStation)
+add_subdirectory(tests/Unit/Beverage)

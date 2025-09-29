@@ -1,0 +1,13 @@
+#include "Model/BeverageInterface.h"
+#include "Model/Beverages/Beverage.h"
+#include "Model/Beverages/Coffee.h"
+#include "Model/Beverages/Tea.h"
+#include "Model/Beverages/Latte.h"
+#include "Model/Beverages/Milkshake.h"
+
+#include "Model/Condiments/Lemon.h"
+#include "Model/Condiments/Syrup.h"
+#include "Model/Condiments/Cinnamon.h"
+#include "Model/Condiments/IceCubes.h"
+#include "Model/Condiments/ChocolateCrumbs.h"
+#include "Model/Condiments/CoconutFlakes.h"
