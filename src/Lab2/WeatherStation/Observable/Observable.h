@@ -3,7 +3,6 @@
 #include "ObservableInterface.h"
 #include <algorithm>
 #include <iostream>
-#include <memory>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>

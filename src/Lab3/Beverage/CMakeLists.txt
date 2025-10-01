@@ -1,1 +1,2 @@
-add_executable(Beverage main.cpp)
+add_executable(Beverage main.cpp
+        ../Stream/main.cpp)
