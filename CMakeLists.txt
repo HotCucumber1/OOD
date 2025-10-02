@@ -19,3 +19,5 @@ add_subdirectory(src/Lab3/Stream)
 add_subdirectory(tests/Unit/WeatherStation)
 add_subdirectory(tests/Unit/Beverage)
 add_subdirectory(tests/Unit/Stream)
+
+add_subdirectory(tests/Integration/Stream)

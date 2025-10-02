@@ -2,11 +2,13 @@
 #include "../../../src/Lab3/Beverage/Model/Beverages/Latte.h"
 #include "../../../src/Lab3/Beverage/Model/Beverages/Tea.h"
 
-#include "../../../src/Lab3/Beverage/Model/Condiments/Cream.h"
 #include "../../../src/Lab3/Beverage/Model/Condiments/ChocolateBar.h"
+#include "../../../src/Lab3/Beverage/Model/Condiments/Cream.h"
 #include "../../../src/Lab3/Beverage/Model/Condiments/Liquor.h"
 
+#include "../../../src/Lab3/Beverage/Model/Size/DoubleCappuccino.h"
 #include "../../../src/Lab3/Beverage/Model/Size/DoubleLatte.h"
+
 #include "../../../src/Lab3/Beverage/Model/Type/DyanHunTea.h"
 #include "../../../src/Lab3/Beverage/Model/Type/LyunCzinTea.h"
 #include "../../../src/Lab3/Beverage/Model/Type/ShuPuerTea.h"
@@ -57,7 +59,7 @@ TEST_CASE("Create double portion")
 
 	SECTION("Test create double cappuccino success")
 	{
-		const auto coffee = std::make_unique<DoubleLatte>(
+		const auto coffee = std::make_unique<DoubleCappuccino>(
 			std::make_unique<Cappuccino>()
 			);
 		REQUIRE(coffee->GetDescription() == "Cappuccino double");

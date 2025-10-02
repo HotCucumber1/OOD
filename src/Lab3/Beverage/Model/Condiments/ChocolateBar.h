@@ -8,6 +8,7 @@ public:
 		: CondimentDecorator(std::move(beverage))
 		, m_count(count)
 	{
+		// TODO assert 5 кусочков (и большой тест)
 	}
 
 protected:

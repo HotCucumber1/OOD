@@ -136,12 +136,17 @@ classDiagram
 
     class ShuPuerTea {
         +ShuPuerTea(BeverageInterface beverage)
-        #GetSizeDescription() strin
+        #GetSizeDescription() string
     }
 
     Beverage ..|> BeverageInterface
     CondimentDecorator ..|> BeverageInterface
+    CondimentDecorator o-- BeverageInterface
+
+    SizeDecorator o-- BeverageInterface
     SizeDecorator ..|> BeverageInterface
+
+    TeaTypeDecorator o-- BeverageInterface
     TeaTypeDecorator ..|> BeverageInterface
 
     Coffee --|> Beverage
@@ -165,5 +170,4 @@ classDiagram
     LyunCzinTea --|> TeaTypeDecorator
     TeGuanyinTea --|> TeaTypeDecorator
     ShuPuerTea --|> TeaTypeDecorator
-
 ```

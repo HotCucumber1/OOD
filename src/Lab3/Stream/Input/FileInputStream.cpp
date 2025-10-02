@@ -22,18 +22,10 @@ uint8_t FileInputStream::ReadByte()
 
 	if (byte == EOF || m_input.fail())
 	{
-		throw std::ios_base::failure("Failed to read byte: end of file or I/O error");
+		throw std::ios_base::failure("Failed to read byte because of the end of the file");
 	}
 
 	return static_cast<uint8_t>(byte);
-	// char byte;
-	// m_input.get(byte);
-	//
-	// if (byte == EOF || m_input.fail())
-	// {
-	// 	throw std::ios_base::failure("Failed to read byte");
-	// }
-	// return byte;
 }
 
 std::streamsize FileInputStream::ReadBlock(void* dstBuffer, const std::streamsize size)
