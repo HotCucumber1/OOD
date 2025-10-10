@@ -1,0 +1,17 @@
+rectangle blue 0 0 500 300
+rectangle green 0 300 500 200
+rectangle red 150 200 200 150
+rectangle yellow 250 150 50 50
+rectangle black 220 250 60 100
+triangle black 150 200 350 200 250 100
+ellipse yellow 400 80 40 40
+rectangle black 400 250 20 100
+ellipse green 380 200 50 40
+ellipse green 410 180 45 35
+ellipse green 400 150 40 30
+ellipse white 100 80 40 25
+ellipse white 130 90 35 20
+ellipse white 80 100 30 15
+ellipse pink 120 350 15 25
+ellipse yellow 120 350 5 5
+rectangle green 120 375 2 25
