@@ -9,7 +9,6 @@ use App\Lab4\Factory\Exception\StreamIsNotResourceException;
 class Client
 {
     /**
-     * @param CanvasInterface $canvas
      * @param resource $stream
      * @throws StreamIsNotResourceException
      */
@@ -24,11 +23,11 @@ class Client
         }
     }
 
-    public function orderPicture(DesignerInterface $designer): void
+    public function orderPicture(DesignerInterface $designer, string $filename): void
     {
         $draft = $designer->createDraft($this->stream);
         Painter::draw($draft, $this->canvas);
 
-        $this->canvas->saveToFile('factory_img.png');
+        $this->canvas->saveToFile($filename);
     }
 }

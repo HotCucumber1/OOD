@@ -16,7 +16,7 @@ function main(): void
         $client = new Client($canvas, STDIN);
         $designer = new Designer(new ShapeFactory());
 
-        $client->orderPicture($designer);
+        $client->orderPicture($designer, 'factory_img.png');
     }
     catch (\Exception $e)
     {

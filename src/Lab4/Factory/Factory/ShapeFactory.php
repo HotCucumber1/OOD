@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Lab4\Factory\Factory;
 
@@ -35,7 +36,7 @@ class ShapeFactory implements ShapeFactoryInterface
             'rectangle' => self::createRect($shapeArgs),
             'triangle' => self::createTriangle($shapeArgs),
             'ellipse' => self::createEllipse($shapeArgs),
-            'polygon' =>self::createPolygon($shapeArgs),
+            'polygon' => self::createPolygon($shapeArgs),
             default => throw new ShapeNotFoundException(),
         };
     }
