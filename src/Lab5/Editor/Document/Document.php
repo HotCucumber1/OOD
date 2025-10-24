@@ -3,53 +3,103 @@ declare(strict_types=1);
 
 namespace App\Lab5\Editor\Document;
 
-use App\Lab5\Editor\Command\CommandInterface;
+use App\Lab5\Editor\Command\DeleteItemCommand;
+use App\Lab5\Editor\Command\InsertImageCommand;
+use App\Lab5\Editor\Command\InsertParagraphCommand;
+use App\Lab5\Editor\Command\ReplaceTextCommand;
+use App\Lab5\Editor\Command\ResizeImageCommand;
+use App\Lab5\Editor\Command\SaveCommand;
+use App\Lab5\Editor\Command\SetTitleCommand;
 use App\Lab5\Editor\Document\Data\DocumentItemInterface;
-use App\Lab5\Editor\Document\Data\Image;
-use App\Lab5\Editor\Document\Data\Paragraph;
-use App\Lab5\Editor\Document\Exception\FailedToSaveFileException;
+use App\Lab5\Editor\Document\Data\ImageInterface;
+use App\Lab5\Editor\Document\Data\ParagraphInterface;
 use App\Lab5\Editor\Document\Exception\InvalidItemIndexException;
-use App\Lab5\Editor\Utils\HtmlSerializer;
+use App\Lab5\Editor\Document\History\History;
 use App\Lab5\Editor\Utils\ImageService;
 
 class Document implements DocumentInterface
 {
-    /**
-     * @var CommandInterface[]
-     */
-    private array $commands = [];
+    private History $history;
 
     /**
      * @var DocumentItemInterface[]
      */
     private array $items = [];
 
-    private int $currentCommandIndex = 0;
-
     private string $title = '';
 
-    /**
-     * @throws InvalidItemIndexException
-     */
+    public function __construct()
+    {
+        $this->history = new History();
+    }
+
     public function insertParagraph(string $content, ?int $position): void
     {
-        $this->insertItem(
-            new Paragraph($content),
-            $position,
+        $this->history->addAndExecuteCommand(
+            new InsertParagraphCommand(
+                $this->items,
+                $content,
+                $position,
+            )
+        );
+    }
+
+    public function insertImage(string $imageUrl, int $width, int $height, ?int $position = null): void
+    {
+        $this->history->addAndExecuteCommand(
+            new InsertImageCommand(
+                $this->items,
+                $imageUrl,
+                $width,
+                $height,
+                $position,
+            ),
         );
     }
 
     /**
      * @throws InvalidItemIndexException
      */
-    public function insertImage(string $imageUrl, int $width, int $height, ?int $position = null): void
+    public function replaceParagraphText(int $position, string $newText): void
     {
-        $newUrl = ImageService::saveImage($imageUrl);
+        $item = $this->items[$position] ?? null;
+        if (is_null($item))
+        {
+            throw new InvalidItemIndexException();
+        }
 
-        $this->insertItem(
-            new Image($newUrl, $width, $height),
-            $position,
-        );
+        if ($item instanceof ParagraphInterface)
+        {
+            $this->history->addAndExecuteCommand(
+                new ReplaceTextCommand(
+                    $item,
+                    $newText,
+                ),
+            );
+        }
+    }
+
+    /**
+     * @throws InvalidItemIndexException
+     */
+    public function resizeImage(int $position, int $newWidth, int $newHeight): void
+    {
+        $item = $this->items[$position] ?? null;
+        if (is_null($item))
+        {
+            throw new InvalidItemIndexException();
+        }
+
+        if ($item instanceof ImageInterface)
+        {
+            $this->history->addAndExecuteCommand(
+                new ResizeImageCommand(
+                    $item,
+                    $newWidth,
+                    $newHeight,
+                ),
+            );
+        }
     }
 
     public function getItemsCount(): int
@@ -74,13 +124,14 @@ class Document implements DocumentInterface
         return $this->items;
     }
 
-    /**
-     * @throws InvalidItemIndexException
-     */
     public function deleteItem(int $index): void
     {
-        $this->assertItemIsSet($index);
-        unset($this->items[$index]);
+        $this->history->addAndExecuteCommand(
+            new DeleteItemCommand(
+                $this->items,
+                $index,
+            )
+        );
     }
 
     public function getTitle(): string
@@ -90,59 +141,44 @@ class Document implements DocumentInterface
 
     public function setTitle(string $title): void
     {
-        $this->title = $title;
+        $this->history->addAndExecuteCommand(
+            new SetTitleCommand(
+                $this->title,
+                $title,
+            ),
+        );
     }
 
     public function canUndo(): bool
     {
-        return true;
-        // TODO: Implement canUndo() method.
+        return $this->history->canUndo();
     }
 
     public function undo(): void
     {
-        // TODO: Implement undo() method.
+        $this->history->undo();
     }
 
     public function canRedo(): bool
     {
-        return true;
-        // TODO: Implement canRedo() method.
+        return $this->history->canRedo();
     }
 
     public function redo(): void
     {
-        // TODO: Implement redo() method.
+        $this->history->redo();
     }
 
-    /**
-     * @throws FailedToSaveFileException
-     */
     public function save(string $path): void
     {
-        $documentConten = HtmlSerializer::serialize($this);
-        if (!file_put_contents($path, $documentConten))
-        {
-            throw new FailedToSaveFileException($path);
-        }
+        $this->history->addAndExecuteCommand(
+            new SaveCommand(
+                $this,
+                $path,
+            ),
+        );
     }
 
-    /**
-     * @throws InvalidItemIndexException
-     */
-    private function insertItem(DocumentItemInterface $item, ?int $position): void
-    {
-        if (is_null($position))
-        {
-            $this->items[] = $item;
-            return;
-        }
-        if ($position >= count($this->items))
-        {
-            throw new InvalidItemIndexException();
-        }
-        array_splice($this->items, $position, 0, $item);
-    }
 
     /**
      * @throws InvalidItemIndexException

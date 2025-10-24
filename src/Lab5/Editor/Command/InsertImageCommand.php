@@ -3,32 +3,73 @@ declare(strict_types=1);
 
 namespace App\Lab5\Editor\Command;
 
-use App\Lab5\Editor\Document\DocumentInterface;
+use App\Lab5\Editor\Command\Exception\FileNotFound;
+use App\Lab5\Editor\Document\Data\Image;
+use App\Lab5\Editor\Document\Exception\InvalidItemIndexException;
+use App\Lab5\Editor\Utils\ImageService;
 
-readonly class InsertImageCommand implements CommandInterface
+final class InsertImageCommand extends AbstractCommand
 {
+    private string $newUrl;
+    private bool $isToDelete = false;
+
     public function __construct(
-        private DocumentInterface $document,
-        private string $imageUrl,
-        private int $width,
-        private int $height,
-        private ?int $position = null,
+        private array           &$items,
+        private readonly string $imageUrl,
+        private readonly int    $width,
+        private readonly int    $height,
+        private ?int            $position = null,
     )
     {
     }
 
-    public function execute(): void
+    /**
+     * @throws FileNotFound
+     */
+    public function __destruct()
     {
-        $this->document->insertImage(
-            $this->imageUrl,
-            $this->width,
-            $this->height,
-            $this->position,
-        );
+        if (!$this->isToDelete)
+        {
+            return;
+        }
+        if (!file_exists($this->newUrl))
+        {
+            throw new FileNotFound($this->newUrl);
+        }
+        if (!unlink($this->newUrl))
+        {
+            throw new \RuntimeException('Failed to delete file.');
+        }
     }
 
-    public function unexecute(): void
+    /**
+     * @throws InvalidItemIndexException
+     */
+    protected function doExecute(): void
     {
-        // TODO: Implement unexecute() method.
+        $this->newUrl = ImageService::saveImage($this->imageUrl);
+
+        $image = new Image($this->newUrl, $this->width, $this->height);
+        if (is_null($this->position))
+        {
+            $this->items[] = $image;
+            return;
+        }
+        if ($this->position >= count($this->items))
+        {
+            throw new InvalidItemIndexException();
+        }
+        array_splice($this->items, $this->position, 0, $image);
+        $this->isToDelete = false;
+    }
+
+    protected function doUnexecute(): void
+    {
+        if (is_null($this->position))
+        {
+            $this->position = count($this->items) - 1;
+        }
+        unset($this->items[$this->position]);
+        $this->isToDelete = true;
     }
 }

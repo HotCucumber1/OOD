@@ -3,17 +3,9 @@ declare(strict_types=1);
 
 namespace App\Lab5\Editor\Controller;
 
-use App\Lab5\Editor\Command\CommandInterface;
-use App\Lab5\Editor\Command\DeleteItemCommand;
-use App\Lab5\Editor\Command\HelpCommand;
-use App\Lab5\Editor\Command\InsertImageCommand;
-use App\Lab5\Editor\Command\InsertParagraphCommand;
-use App\Lab5\Editor\Command\ListCommand;
-use App\Lab5\Editor\Command\ReplaceTextCommand;
-use App\Lab5\Editor\Command\ResizeImageCommand;
-use App\Lab5\Editor\Command\SaveCommand;
-use App\Lab5\Editor\Command\SetTitleCommand;
 use App\Lab5\Editor\Controller\Exception\UnknownCommandException;
+use App\Lab5\Editor\Document\Data\ImageInterface;
+use App\Lab5\Editor\Document\Data\ParagraphInterface;
 use App\Lab5\Editor\Document\DocumentInterface;
 
 readonly class EditorController
@@ -29,6 +21,20 @@ readonly class EditorController
     private const string UNDO = 'Undo';
     private const string REDO = 'Redo';
     private const string SAVE = 'Save';
+
+    private const array COMMANDS_INFO = [
+        self::INSERT_PARAGRAPH => '',
+        self::INSERT_IMAGE => '',
+        self::SET_TITLE => '',
+        self::LIST => '',
+        self::REPLACE_TEXT => '',
+        self::RESIZE_IMAGE => '',
+        self::DELETE_ITEM => '',
+        self::HELP => '',
+        self::UNDO => '',
+        self::REDO => '',
+        self::SAVE => '',
+    ];
 
     public function __construct(
         private DocumentInterface $document,
@@ -48,10 +54,9 @@ readonly class EditorController
             {
                 break;
             }
-            $command = $this->getCommand($line);
-            $command->execute();
+            $this->executeCommand($line);
 
-            if ($command instanceof SaveCommand)
+            if (isset($line[0]) && $line[0] === self::SAVE)
             {
                 break;
             }
@@ -61,120 +66,141 @@ readonly class EditorController
     /**
      * @throws UnknownCommandException
      */
-    private function getCommand(string $line): CommandInterface
+    private function executeCommand(string $line): void
     {
         $args = explode(' ', $line);
-        // TODO везде валидация
 
-        return match ($args[0])
+        // TODO везде валидация
+        try
         {
-            self::INSERT_PARAGRAPH => $this->getInsertParagraphCommand($args),
-            self::INSERT_IMAGE => $this->getInsertImageCommand($args),
-            self::SET_TITLE => $this->getSetTitleCommand($args),
-            self::LIST => $this->getListCommand(),
-            self::REPLACE_TEXT => $this->getReplaceTextCommand($args),
-            self::RESIZE_IMAGE => $this->getResizeImageCommand($args),
-            self::DELETE_ITEM => $this->getDeleteItemCommand($args),
-            self::HELP => self::getHelpCommand(),
-            self::UNDO => self::getHelpCommand(), // TODO заменить
-            self::REDO => self::getHelpCommand(),
-            self::SAVE => $this->getSaveCommand($args),
-            default => throw new UnknownCommandException($args[0]),
-        };
+            match ($args[0])
+            {
+                self::INSERT_PARAGRAPH => $this->insertParagraph($args),
+                self::INSERT_IMAGE => $this->insertImage($args),
+                self::SET_TITLE => $this->setTitle($args),
+                self::LIST => $this->listItems(),
+                self::REPLACE_TEXT => $this->replaceText($args),
+                self::RESIZE_IMAGE => $this->resizeImage($args),
+                self::DELETE_ITEM => $this->deleteItem($args),
+                self::HELP => self::help(),
+                self::UNDO => $this->document->undo(),
+                self::REDO => $this->document->redo(),
+                self::SAVE => $this->saveDocument($args),
+                default => throw new UnknownCommandException($args[0]),
+            };
+        }
+        catch (\Throwable $e)
+        {
+            echo $e->getMessage() . PHP_EOL;
+        }
     }
 
     /**
      * @param string[] $args
      */
-    private function getInsertParagraphCommand(array $args): InsertParagraphCommand
+    private function insertParagraph(array $args): void
     {
         $text = $args[2];
-        $position = $args[1] === 'end' ? null : (int) $args[1];
-        return new InsertParagraphCommand($this->document, $text, $position);
+        $position = $args[1] === 'end'
+            ? null
+            : (int) $args[1];
+
+        $this->document->insertParagraph($text, $position);
     }
 
     /**
      * @param string[] $args
      */
-    private function getInsertImageCommand(array $args): InsertImageCommand
+    private function insertImage(array $args): void
     {
         $width = (int) $args[2];
         $height = (int) $args[3];
         $fileUrl = $args[4];
         $position = $args[1] === 'end' ? null : (int) $args[1];
 
-        return new InsertImageCommand($this->document, $fileUrl, $width, $height, $position);
+        $this->document->insertImage($fileUrl, $width, $height, $position);
     }
 
     /**
      * @param string[] $args
      */
-    private function getSetTitleCommand(array $args): SetTitleCommand
+    private function setTitle(array $args): void
     {
-        $title = $args[1];
-        return new SetTitleCommand($this->document, $title);
+        $this->document->setTitle($args[1]);
     }
 
-    private function getListCommand(): ListCommand
+    private function listItems(): void
     {
-        return new ListCommand($this->document, STDOUT);
+        $title = $this->document->getTitle();
+        $items = $this->document->listItems();
+
+        echo 'Title: ' . $title;
+        foreach ($items as $index => $item)
+        {
+            $message = $index . '. ';
+            if ($item instanceof ImageInterface)
+            {
+                $message .= 'Image: ' . self::getImageInfo($item);
+            }
+            elseif ($item instanceof ParagraphInterface)
+            {
+                $message .= 'Paragraph: ' . $item->getText();
+            }
+            echo $message;
+        }
     }
 
     /**
      * @param string[] $args
      */
-    private function getReplaceTextCommand(array $args): ReplaceTextCommand
+    private function replaceText(array $args): void
     {
         $position = (int) $args[1];
         $text = $args[2];
 
-        return new ReplaceTextCommand($this->document, $position, $text);
+        $this->document->replaceParagraphText($position, $text);
     }
 
     /**
      * @param string[] $args
      */
-    private function getResizeImageCommand(array $args): ResizeImageCommand
+    private function resizeImage(array $args): void
     {
         $position = (int) $args[1];
         $width = (int) $args[2];
         $height = (int) $args[3];
 
-        return new ResizeImageCommand($this->document, $position, $width, $height);
+        $this->document->resizeImage($position, $width, $height);
     }
 
     /**
      * @param string[] $args
      */
-    private function getDeleteItemCommand(array $args): DeleteItemCommand
+    private function deleteItem(array $args): void
     {
         $position = (int) $args[1];
-        return new DeleteItemCommand($this->document, $position);
+        $this->document->deleteItem($position);
     }
 
-    private static function getHelpCommand(): HelpCommand
+    private static function help(): void
     {
-        return new HelpCommand([
-            self::INSERT_PARAGRAPH => '',
-            self::INSERT_IMAGE => '',
-            self::SET_TITLE => '',
-            self::LIST => '',
-            self::REPLACE_TEXT => '',
-            self::RESIZE_IMAGE => '',
-            self::DELETE_ITEM => '',
-            self::HELP => '',
-            self::UNDO => '',
-            self::REDO => '',
-            self::SAVE => '',
-        ]);
+        foreach (self::COMMANDS_INFO as $command => $description)
+        {
+            echo $command . ': ' . $description . PHP_EOL;
+        }
     }
 
     /**
      * @param string[] $args
      */
-    private function getSaveCommand(array $args): SaveCommand
+    private function saveDocument(array $args): void
     {
         $fileUrl = $args[1];
-        return new SaveCommand($this->document, $fileUrl);
+        $this->document->save($fileUrl);
+    }
+
+    private static function getImageInfo(ImageInterface $image): string
+    {
+        return $image->getWidth() . 'x' . $image->getHeight() . ' ' . $image->getPath();
     }
 }

@@ -3,24 +3,26 @@ declare(strict_types=1);
 
 namespace App\Lab5\Editor\Command;
 
-use App\Lab5\Editor\Document\DocumentInterface;
 
-readonly class SetTitleCommand implements CommandInterface
+final class SetTitleCommand extends AbstractCommand
 {
+    private string $oldTitle;
+
     public function __construct(
-        private DocumentInterface $document,
-        private string            $newTitle,
+        private string          &$title,
+        private readonly string $newTitle,
     )
     {
     }
 
-    public function execute(): void
+    protected function doExecute(): void
     {
-        $this->document->setTitle($this->newTitle);
+        $this->oldTitle = $this->title;
+        $this->title = $this->newTitle;
     }
 
-    public function unexecute(): void
+    protected function doUnexecute(): void
     {
-        // TODO: Implement unexecute() method.
+        $this->title = $this->oldTitle;
     }
 }

@@ -4,34 +4,37 @@ declare(strict_types=1);
 namespace App\Lab5\Editor\Command;
 
 use App\Lab5\Editor\Document\Data\ImageInterface;
-use App\Lab5\Editor\Document\DocumentInterface;
 
-readonly class ResizeImageCommand implements CommandInterface
+final class ResizeImageCommand extends AbstractCommand
 {
+    private int $oldWidth;
+    private int $oldHeight;
+
     public function __construct(
-        private DocumentInterface $document,
-        private int               $itemIndex,
-        private int               $newWidth,
-        private int               $newHeight,
+        private readonly ImageInterface $image,
+        private readonly int            $newWidth,
+        private readonly int            $newHeight,
     )
     {
     }
 
-    public function execute(): void
+    protected function doExecute(): void
     {
         // TODO склейка
-        $item = $this->document->getItem($this->itemIndex);
-        if (!$item instanceof ImageInterface)
-        {
-            echo "Item {$this->itemIndex} is not image" . PHP_EOL;
-            return;
-        }
+        $this->oldWidth = $this->image->getWidth();
+        $this->oldHeight = $this->image->getHeight();
 
-        $item->resize($this->newWidth, $this->newHeight);
+        $this->image->resize(
+            $this->newWidth,
+            $this->newHeight,
+        );
     }
 
-    public function unexecute(): void
+    protected function doUnexecute(): void
     {
-        // TODO: Implement unexecute() method.
+        $this->image->resize(
+            $this->oldWidth,
+            $this->oldHeight,
+        );
     }
 }

@@ -11,6 +11,10 @@ interface DocumentInterface
 
     public function insertImage(string $imageUrl, int $width, int $height, ?int $position = null): void;
 
+    public function replaceParagraphText(int $position, string $newText): void;
+
+    public function resizeImage(int $position, int $newWidth, int $newHeight): void;
+
     public function getItemsCount(): int;
 
     public function getItem(int $index): DocumentItemInterface;

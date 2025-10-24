@@ -3,24 +3,44 @@ declare(strict_types=1);
 
 namespace App\Lab5\Editor\Command;
 
+use App\Lab5\Editor\Command\Exception\FileNotFound;
 use App\Lab5\Editor\Document\DocumentInterface;
+use App\Lab5\Editor\Document\Exception\FailedToSaveFileException;
+use App\Lab5\Editor\Utils\HtmlSerializer;
 
-readonly class SaveCommand implements CommandInterface
+final class SaveCommand extends AbstractCommand
 {
     public function __construct(
-        private DocumentInterface $document,
-        private string            $fileUrl,
+        private readonly DocumentInterface $document,
+        private readonly string            $fileUrl,
     )
     {
     }
 
-    public function execute(): void
+    /**
+     * @throws FailedToSaveFileException
+     */
+    protected function doExecute(): void
     {
-        $this->document->save($this->fileUrl);
+        $documentContent = HtmlSerializer::serialize($this->document);
+        if (!file_put_contents($this->fileUrl, $documentContent))
+        {
+            throw new FailedToSaveFileException($this->fileUrl);
+        }
     }
 
-    public function unexecute(): void
+    /**
+     * @throws FileNotFound
+     */
+    protected function doUnexecute(): void
     {
-        // TODO: Implement unexecute() method.
+        if (!file_exists($this->fileUrl))
+        {
+            throw new FileNotFound($this->fileUrl);
+        }
+        if (!unlink($this->fileUrl))
+        {
+            throw new \RuntimeException('Failed to delete file.');
+        }
     }
 }

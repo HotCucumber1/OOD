@@ -4,33 +4,27 @@ declare(strict_types=1);
 namespace App\Lab5\Editor\Command;
 
 use App\Lab5\Editor\Document\Data\ParagraphInterface;
-use App\Lab5\Editor\Document\DocumentInterface;
 
-readonly class ReplaceTextCommand implements CommandInterface
+final class ReplaceTextCommand extends AbstractCommand
 {
+    private string $oldText;
+
     public function __construct(
-        private DocumentInterface $document,
-        private int               $itemIndex,
-        private string            $newText,
+        private readonly ParagraphInterface $paragraph,
+        private readonly string             $newText,
     )
     {
     }
 
-    public function execute(): void
+    protected function doExecute(): void
     {
         // TODO склейка
-        $item = $this->document->getItem($this->itemIndex);
-        if (!$item instanceof ParagraphInterface)
-        {
-            echo "Item {$this->itemIndex} is not paragraph" . PHP_EOL;
-            return;
-        }
-
-        $item->setText($this->newText);
+        $this->oldText = $this->paragraph->getText();
+        $this->paragraph->setText($this->newText);
     }
 
-    public function unexecute(): void
+    protected function doUnexecute(): void
     {
-        // TODO: Implement unexecute() method.
+        $this->paragraph->setText($this->oldText);
     }
 }
