@@ -27,11 +27,11 @@ final class InsertParagraphCommand extends AbstractCommand
             $this->items[] = $paragraph;
             return;
         }
-        if ($this->position >= count($this->items))
+        if ($this->position !== 0 && $this->position >= count($this->items))
         {
             throw new InvalidItemIndexException();
         }
-        array_splice($this->items, $this->position, 0, $paragraph);
+        array_splice($this->items, $this->position, 0, [$paragraph]);
     }
 
     protected function doUnexecute(): void

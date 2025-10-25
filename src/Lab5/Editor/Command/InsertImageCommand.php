@@ -6,19 +6,20 @@ namespace App\Lab5\Editor\Command;
 use App\Lab5\Editor\Command\Exception\FileNotFound;
 use App\Lab5\Editor\Document\Data\Image;
 use App\Lab5\Editor\Document\Exception\InvalidItemIndexException;
-use App\Lab5\Editor\Utils\ImageService;
+use App\Lab5\Editor\Utils\ImageSaveStrategyInterface;
 
 final class InsertImageCommand extends AbstractCommand
 {
     private string $newUrl;
-    private bool $isToDelete = false;
+    private bool $isToDeleteState = true;
 
     public function __construct(
-        private array           &$items,
-        private readonly string $imageUrl,
-        private readonly int    $width,
-        private readonly int    $height,
-        private ?int            $position = null,
+        private array                               &$items,
+        private readonly string                     $imageUrl,
+        private readonly int                        $width,
+        private readonly int                        $height,
+        private ?int                                $position,
+        private readonly ImageSaveStrategyInterface $imageService,
     )
     {
     }
@@ -28,18 +29,11 @@ final class InsertImageCommand extends AbstractCommand
      */
     public function __destruct()
     {
-        if (!$this->isToDelete)
+        if (!$this->isToDeleteState)
         {
             return;
         }
-        if (!file_exists($this->newUrl))
-        {
-            throw new FileNotFound($this->newUrl);
-        }
-        if (!unlink($this->newUrl))
-        {
-            throw new \RuntimeException('Failed to delete file.');
-        }
+        unlink($this->newUrl);
     }
 
     /**
@@ -47,20 +41,20 @@ final class InsertImageCommand extends AbstractCommand
      */
     protected function doExecute(): void
     {
-        $this->newUrl = ImageService::saveImage($this->imageUrl);
-
+        $this->newUrl = $this->imageService->saveImage($this->imageUrl);
         $image = new Image($this->newUrl, $this->width, $this->height);
+
         if (is_null($this->position))
         {
             $this->items[] = $image;
             return;
         }
-        if ($this->position >= count($this->items))
+        if ($this->position !== 0 && $this->position >= count($this->items))
         {
             throw new InvalidItemIndexException();
         }
-        array_splice($this->items, $this->position, 0, $image);
-        $this->isToDelete = false;
+        array_splice($this->items, $this->position, 0, [$image]);
+        $this->isToDeleteState = false;
     }
 
     protected function doUnexecute(): void
@@ -70,6 +64,6 @@ final class InsertImageCommand extends AbstractCommand
             $this->position = count($this->items) - 1;
         }
         unset($this->items[$this->position]);
-        $this->isToDelete = true;
+        $this->isToDeleteState = true;
     }
 }

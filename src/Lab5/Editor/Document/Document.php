@@ -15,6 +15,7 @@ use App\Lab5\Editor\Document\Data\ImageInterface;
 use App\Lab5\Editor\Document\Data\ParagraphInterface;
 use App\Lab5\Editor\Document\Exception\InvalidItemIndexException;
 use App\Lab5\Editor\Document\History\History;
+use App\Lab5\Editor\Utils\ImageSaveStrategyInterface;
 
 class Document implements DocumentInterface
 {
@@ -27,7 +28,9 @@ class Document implements DocumentInterface
 
     private string $title = '';
 
-    public function __construct()
+    public function __construct(
+        private readonly ImageSaveStrategyInterface $imageService,
+    )
     {
         $this->history = new History();
     }
@@ -52,6 +55,7 @@ class Document implements DocumentInterface
                 $width,
                 $height,
                 $position,
+                $this->imageService,
             ),
         );
     }
@@ -67,15 +71,16 @@ class Document implements DocumentInterface
             throw new InvalidItemIndexException();
         }
 
-        if ($item instanceof ParagraphInterface)
+        if (!$item instanceof ParagraphInterface)
         {
-            $this->history->addAndExecuteCommand(
-                new ReplaceTextCommand(
-                    $item,
-                    $newText,
-                ),
-            );
+            throw new InvalidItemIndexException();
         }
+        $this->history->addAndExecuteCommand(
+            new ReplaceTextCommand(
+                $item,
+                $newText,
+            ),
+        );
         $this->items[$position] = $item;
     }
 
@@ -90,16 +95,17 @@ class Document implements DocumentInterface
             throw new InvalidItemIndexException();
         }
 
-        if ($item instanceof ImageInterface)
+        if (!$item instanceof ImageInterface)
         {
-            $this->history->addAndExecuteCommand(
-                new ResizeImageCommand(
-                    $item,
-                    $newWidth,
-                    $newHeight,
-                ),
-            );
+            throw new InvalidItemIndexException();
         }
+        $this->history->addAndExecuteCommand(
+            new ResizeImageCommand(
+                $item,
+                $newWidth,
+                $newHeight,
+            ),
+        );
         $this->items[$position] = $item;
     }
 
@@ -179,7 +185,6 @@ class Document implements DocumentInterface
             ),
         );
     }
-
 
     /**
      * @throws InvalidItemIndexException

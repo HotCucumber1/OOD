@@ -19,3 +19,5 @@ function main(): void
 }
 
 main();
+
+// /home/dmitriy.rybakov/Downloads/photo_2025-10-24_14-40-32.jpg

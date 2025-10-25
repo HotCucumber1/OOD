@@ -42,9 +42,6 @@ readonly class EditorController
     {
     }
 
-    /**
-     * @throws UnknownCommandException
-     */
     public function processCommands(): void
     {
         while (!feof(STDIN))
@@ -55,23 +52,18 @@ readonly class EditorController
                 break;
             }
             $this->executeCommand($line);
-            // var_dump($this->document->listItems());
-
-            if (isset($line[0]) && $line[0] === self::SAVE)
+            $args = explode(' ', $line);
+            if (isset($args[0]) && $args[0] === self::SAVE)
             {
                 break;
             }
         }
     }
 
-    /**
-     * @throws UnknownCommandException
-     */
     private function executeCommand(string $line): void
     {
         $args = explode(' ', $line);
 
-        // TODO везде валидация
         try
         {
             match ($args[0])
@@ -117,7 +109,9 @@ readonly class EditorController
         $width = (int) $args[2];
         $height = (int) $args[3];
         $fileUrl = $args[4];
-        $position = $args[1] === 'end' ? null : (int) $args[1];
+        $position = $args[1] === 'end'
+            ? null
+            : (int) $args[1];
 
         $this->document->insertImage($fileUrl, $width, $height, $position);
     }

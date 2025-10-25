@@ -32,7 +32,6 @@ final class ResizeImageCommand extends AbstractCommand
 
     protected function doExecute(): void
     {
-        // TODO склейка
         $this->oldWidth = $this->image->getWidth();
         $this->oldHeight = $this->image->getHeight();
 

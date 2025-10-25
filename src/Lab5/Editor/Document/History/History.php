@@ -8,12 +8,20 @@ use App\Lab5\Editor\Command\UndoableCommandInterface;
 
 class History
 {
-    private const int MAX_DEPTH = 10;
+    public const int MAX_DEPTH = 10;
     /**
      * @var UndoableCommandInterface[]
      */
     private array $commands = [];
     private int $nextCommandIndex = 0;
+
+    /**
+     * @return UndoableCommandInterface[]
+     */
+    public function getCommands(): array
+    {
+        return $this->commands;
+    }
 
     public function canUndo(): bool
     {

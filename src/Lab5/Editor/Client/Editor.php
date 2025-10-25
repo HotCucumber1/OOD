@@ -6,6 +6,7 @@ namespace App\Lab5\Editor\Client;
 use App\Lab5\Editor\Controller\EditorController;
 use App\Lab5\Editor\Controller\Exception\UnknownCommandException;
 use App\Lab5\Editor\Document\Document;
+use App\Lab5\Editor\Utils\ImageSaveStrategy;
 
 class Editor
 {
@@ -13,7 +14,11 @@ class Editor
 
     public function __construct()
     {
-        $this->controller = new EditorController(new Document());
+        $this->controller = new EditorController(
+            new Document(
+                new ImageSaveStrategy(),
+            ),
+        );
     }
 
     /**

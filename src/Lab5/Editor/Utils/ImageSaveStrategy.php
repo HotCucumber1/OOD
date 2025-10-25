@@ -5,11 +5,11 @@ namespace App\Lab5\Editor\Utils;
 
 use Ramsey\Uuid\Uuid;
 
-class ImageService
+class ImageSaveStrategy implements ImageSaveStrategyInterface
 {
     private const string DST_DIR = 'images/';
 
-    public static function saveImage(string $sourceUrl): string
+    public function saveImage(string $sourceUrl): string // TODO (перенести в команду и так там)
     {
         $extension = pathinfo($sourceUrl, PATHINFO_EXTENSION);
         $newName = Uuid::uuid4()->toString() . '.' . $extension;
