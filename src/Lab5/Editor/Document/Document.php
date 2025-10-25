@@ -15,7 +15,6 @@ use App\Lab5\Editor\Document\Data\ImageInterface;
 use App\Lab5\Editor\Document\Data\ParagraphInterface;
 use App\Lab5\Editor\Document\Exception\InvalidItemIndexException;
 use App\Lab5\Editor\Document\History\History;
-use App\Lab5\Editor\Utils\ImageService;
 
 class Document implements DocumentInterface
 {
@@ -77,6 +76,7 @@ class Document implements DocumentInterface
                 ),
             );
         }
+        $this->items[$position] = $item;
     }
 
     /**
@@ -100,6 +100,7 @@ class Document implements DocumentInterface
                 ),
             );
         }
+        $this->items[$position] = $item;
     }
 
     public function getItemsCount(): int

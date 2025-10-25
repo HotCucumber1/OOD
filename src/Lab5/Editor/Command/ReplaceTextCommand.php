@@ -16,9 +16,19 @@ final class ReplaceTextCommand extends AbstractCommand
     {
     }
 
+    public function replaceEdit(UndoableCommandInterface $edit): bool
+    {
+        if (!$edit instanceof self || $edit->paragraph !== $this->paragraph)
+        {
+            return false;
+        }
+
+        $this->oldText = $edit->oldText;
+        return true;
+    }
+
     protected function doExecute(): void
     {
-        // TODO склейка
         $this->oldText = $this->paragraph->getText();
         $this->paragraph->setText($this->newText);
     }

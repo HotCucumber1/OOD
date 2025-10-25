@@ -18,6 +18,18 @@ final class ResizeImageCommand extends AbstractCommand
     {
     }
 
+    public function replaceEdit(UndoableCommandInterface $edit): bool
+    {
+        if (!$edit instanceof self || $this->image !== $edit->image)
+        {
+            return false;
+        }
+
+        $this->oldWidth = $edit->oldHeight;
+        $this->oldHeight = $edit->oldHeight;
+        return true;
+    }
+
     protected function doExecute(): void
     {
         // TODO склейка

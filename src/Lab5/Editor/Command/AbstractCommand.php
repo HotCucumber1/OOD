@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Lab5\Editor\Command;
 
-abstract class AbstractCommand implements CommandInterface
+abstract class AbstractCommand extends AbstractUndoableCommand
 {
     private bool $isExecuted = false;
 

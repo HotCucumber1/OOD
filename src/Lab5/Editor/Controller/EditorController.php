@@ -55,6 +55,7 @@ readonly class EditorController
                 break;
             }
             $this->executeCommand($line);
+            // var_dump($this->document->listItems());
 
             if (isset($line[0]) && $line[0] === self::SAVE)
             {

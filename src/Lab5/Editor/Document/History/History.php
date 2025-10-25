@@ -4,12 +4,13 @@ declare(strict_types=1);
 namespace App\Lab5\Editor\Document\History;
 
 use App\Lab5\Editor\Command\CommandInterface;
+use App\Lab5\Editor\Command\UndoableCommandInterface;
 
 class History
 {
     private const int MAX_DEPTH = 10;
     /**
-     * @var CommandInterface[]
+     * @var UndoableCommandInterface[]
      */
     private array $commands = [];
     private int $nextCommandIndex = 0;
@@ -41,36 +42,56 @@ class History
         }
     }
 
-    public function addAndExecuteCommand(CommandInterface $command): void
+    public function addAndExecuteCommand(UndoableCommandInterface $command): void
     {
         $command->execute();
 
         if ($this->nextCommandIndex < count($this->commands))
         {
-            $this->nextCommandIndex++;
             $removed = array_splice($this->commands, $this->nextCommandIndex);
-            $this->commands[count($this->commands) - 1] = $command;
-
-            self::clenUp($removed);
-            return;
+            self::cleanUp($removed);
         }
 
-        if ($this->nextCommandIndex < self::MAX_DEPTH)
+        $wasMerged = $this->tryMerge($command);
+        if (!$wasMerged)
         {
+            $this->addNewCommand($command);
             $this->nextCommandIndex++;
         }
-        else
+    }
+
+    private function tryMerge(UndoableCommandInterface $command): bool
+    {
+        if ($this->nextCommandIndex === 0)
+        {
+            return false;
+        }
+        $lastCommand = $this->commands[$this->nextCommandIndex - 1];
+
+        if ($command->replaceEdit($lastCommand))
+        {
+            $this->commands[$this->nextCommandIndex - 1] = $command;
+            return true;
+        }
+        return false;
+    }
+
+    private function addNewCommand(UndoableCommandInterface $command): void
+    {
+        if (count($this->commands) >= self::MAX_DEPTH)
         {
             $removed = array_shift($this->commands);
             unset($removed);
+            $this->nextCommandIndex--;
         }
+
         $this->commands[] = $command;
     }
 
     /**
      * @param CommandInterface[] $commands
      */
-    private static function clenUp(array $commands): void
+    private static function cleanUp(array $commands): void
     {
         foreach ($commands as $command)
         {
