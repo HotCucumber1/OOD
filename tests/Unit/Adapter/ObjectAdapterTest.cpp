@@ -1,4 +1,4 @@
-#include "../../../src/Lab6/ObjectAdapter/ModernGraphicsLib.h"
+#include "../../../src/Lab6/ModernGraphicsLib.h"
 #include "../../../src/Lab6/ObjectAdapter/RendererToCanvasAdapter.h"
 
 #include <catch2/catch_all.hpp>

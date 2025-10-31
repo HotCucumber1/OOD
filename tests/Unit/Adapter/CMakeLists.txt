@@ -1,0 +1,5 @@
+add_executable(TestObjectAdapter ObjectAdapterTest.cpp)
+add_executable(TestClassAdapter ClassAdapterTest.cpp)
+
+target_link_libraries(TestObjectAdapter PRIVATE Catch2::Catch2WithMain)
+target_link_libraries(TestClassAdapter PRIVATE Catch2::Catch2WithMain)

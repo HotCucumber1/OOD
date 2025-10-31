@@ -1,7 +1,7 @@
 #pragma once
 
-#include "GraphicsLib.h"
-#include "ModernGraphicsLib.h"
+#include "../GraphicsLib.h"
+#include "../ModernGraphicsLib.h"
 
 class RendererToCanvasAdapter final : public graphics_lib::ICanvas
 {

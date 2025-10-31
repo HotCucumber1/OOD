@@ -1,5 +1,5 @@
 #include "ModernGraphicsLib.h"
-#include "RendererToCanvasAdapter.h"
+#include "ObjectAdapter/RendererToCanvasAdapter.h"
 #include "ShapeDrawingLib.h"
 
 namespace app
