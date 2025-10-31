@@ -1,0 +1,3 @@
+add_executable(TestRendererAdapter RendererToCanvasAdapterTest.cpp)
+
+target_link_libraries(TestRendererAdapter PRIVATE Catch2::Catch2WithMain)
