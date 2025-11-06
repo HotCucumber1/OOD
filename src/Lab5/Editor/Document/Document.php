@@ -29,7 +29,7 @@ class Document implements DocumentInterface
     private string $title = '';
 
     public function __construct(
-        private readonly ImageSaveStrategyInterface $imageService,
+        private readonly ImageSaveStrategyInterface $imageSaveStrategy,
     )
     {
         $this->history = new History();
@@ -55,7 +55,7 @@ class Document implements DocumentInterface
                 $width,
                 $height,
                 $position,
-                $this->imageService,
+                $this->imageSaveStrategy,
             ),
         );
     }
