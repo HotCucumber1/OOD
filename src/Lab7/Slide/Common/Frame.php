@@ -30,11 +30,11 @@ class Frame
 
     public function getWidth(): int
     {
-        return $this->bottomRight->x - $this->topLeft->x;
+        return abs($this->bottomRight->x - $this->topLeft->x);
     }
 
     public function getHeight(): int
     {
-        return $this->topLeft->y - $this->bottomRight->y;
+        return abs($this->topLeft->y - $this->bottomRight->y);
     }
 }

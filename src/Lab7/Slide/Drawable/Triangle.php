@@ -62,6 +62,20 @@ class Triangle extends AbstractShape
         $this->frame = $frame;
     }
 
+    public function clone(): SlideComponentInterface
+    {
+        return new Triangle(
+            $this->points[0]->x,
+            $this->points[0]->y,
+            $this->points[1]->x,
+            $this->points[1]->y,
+            $this->points[2]->x,
+            $this->points[2]->y,
+            $this->fillStyle,
+            $this->strokeStyle,
+        );
+    }
+
     private static function transformPoint(Point $point, Frame $oldFrame, Frame $newFrame): Point
     {
         $normalizedX = ($point->x - $oldFrame->topLeft->x) / $oldFrame->getWidth();

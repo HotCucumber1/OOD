@@ -44,4 +44,16 @@ class Rectangle extends AbstractShape
     {
         $this->frame = $frame;
     }
+
+    public function clone(): SlideComponentInterface
+    {
+        return new Rectangle(
+            $this->frame->topLeft->x,
+            $this->frame->topLeft->y,
+            $this->frame->bottomRight->x,
+            $this->frame->bottomRight->y,
+            $this->fillStyle,
+            $this->strokeStyle,
+        );
+    }
 }

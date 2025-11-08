@@ -88,10 +88,6 @@ classDiagram
         - shapes: Array~SlideComponentInterface~
     }
 
-    class SlideController {
-
-    }
-
     CanvasInterface <|.. Canvas
     DrawableInterface <|-- SlideComponentInterface
 
@@ -107,8 +103,8 @@ classDiagram
 
     SlideComponentInterface <|.. AbstractShape
     SlideComponentInterface <|.. ShapeGroup
-    SlideComponentInterface <|.. Slide
+    DrawableInterface <|.. Slide
 
     ShapeGroup *-- SlideComponentInterface
-    Slide *-- SlideComponentInterface
+    Slide *-- DrawableInterface
 ```

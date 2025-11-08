@@ -16,8 +16,8 @@ class Ellipse extends AbstractShape
         private Point $center,
         private int   $rx,
         private int   $ry,
-        StrokeStyle   $strokeStyle,
         FillStyle     $fillStyle,
+        StrokeStyle   $strokeStyle,
     )
     {
         parent::__construct(
@@ -40,13 +40,33 @@ class Ellipse extends AbstractShape
 
     public function setFrame(Frame $frame): void
     {
-        $this->frame = $frame;
-        $this->rx = $frame->getWidth() / 2;
-        $this->ry = $frame->getHeight() / 2;
+        $oldFrame = $this->getFrame();
+
+        $scaleX = $frame->getWidth() / $oldFrame->getWidth();
+        $scaleY = $frame->getHeight() / $oldFrame->getHeight();
+
+        $this->rx = (int)($this->rx * $scaleX);
+        $this->ry = (int)($this->ry * $scaleY);
+
+        $newCenterX = $frame->topLeft->x + $frame->getWidth() / 2;
+        $newCenterY = $frame->topLeft->y + $frame->getHeight() / 2;
 
         $this->center = new Point(
-            $frame->topLeft->x + $this->rx,
-            $frame->topLeft->y + $this->ry,
+            (int)$newCenterX,
+            (int)$newCenterY
+        );
+
+        $this->frame = $frame;
+    }
+
+    public function clone(): SlideComponentInterface
+    {
+        return new Ellipse(
+            $this->center,
+            $this->rx,
+            $this->ry,
+            $this->fillStyle,
+            $this->strokeStyle,
         );
     }
 }

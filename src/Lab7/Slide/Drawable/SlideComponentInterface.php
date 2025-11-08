@@ -3,11 +3,13 @@ declare(strict_types=1);
 
 namespace App\Lab7\Slide\Drawable;
 
+use App\Lab7\Slide\Common\CopyableInterface;
 use App\Lab7\Slide\Common\FillStyle;
 use App\Lab7\Slide\Common\Frame;
+use App\Lab7\Slide\Common\GroupInterface;
 use App\Lab7\Slide\Common\StrokeStyle;
 
-interface SlideComponentInterface extends DrawableInterface
+interface SlideComponentInterface extends DrawableInterface, GroupInterface, CopyableInterface
 {
     public function getFrame(): Frame;
 

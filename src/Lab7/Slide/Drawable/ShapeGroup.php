@@ -15,7 +15,9 @@ class ShapeGroup implements SlideComponentInterface
      * @param SlideComponentInterface[] $components
      * @throws GroupMustContainAtLeastOneShapeException
      */
-    public function __construct(private array $components)
+    public function __construct( // TODO валидаци 0 0 0 0
+        private array $components,
+    )
     {
         if (empty($this->components))
         {
@@ -71,9 +73,33 @@ class ShapeGroup implements SlideComponentInterface
 
     public function setFrame(Frame $frame): void
     {
+        $origFrame = $this->getFrame();
+
+        $scaleX = $frame->getWidth() / $origFrame->getWidth();
+        $scaleY = $frame->getHeight() / $origFrame->getHeight();
+
         foreach ($this->components as $component)
         {
-            $component->setFrame($frame);
+            $shapeOrigFrame = $component->getFrame();
+
+            $relativeLeft = $shapeOrigFrame->topLeft->x - $origFrame->topLeft->x;
+            $relativeTop = $shapeOrigFrame->topLeft->y - $origFrame->topLeft->y;
+            $relativeRight = $shapeOrigFrame->bottomRight->x - $origFrame->topLeft->x;
+            $relativeBottom = $shapeOrigFrame->bottomRight->y - $origFrame->topLeft->y;
+
+            $newLeft = $frame->topLeft->x + $relativeLeft * $scaleX;
+            $newTop = $frame->topLeft->y + $relativeTop * $scaleY;
+            $newRight = $frame->topLeft->x + $relativeRight * $scaleX;
+            $newBottom = $frame->topLeft->y + $relativeBottom * $scaleY;
+
+            $newFrame = new Frame(
+                (int)$newLeft,
+                (int)$newTop,
+                (int)$newRight,
+                (int)$newBottom
+            );
+
+            $component->setFrame($newFrame);
         }
     }
 
@@ -108,6 +134,24 @@ class ShapeGroup implements SlideComponentInterface
     public function getGroup(): ?ShapeGroup
     {
         return $this;
+    }
+
+    /**
+     * @return SlideComponentInterface[]
+     */
+    public function listElements(): array
+    {
+        return $this->components;
+    }
+
+    /**
+     * @throws GroupMustContainAtLeastOneShapeException
+     */
+    public function clone(): SlideComponentInterface
+    {
+        return new ShapeGroup(array_map(static function (SlideComponentInterface $component): SlideComponentInterface {
+            return $component->clone();
+        }, $this->components));
     }
 
     private function getAllFillStyles(): array

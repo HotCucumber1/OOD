@@ -8,6 +8,4 @@ use App\Lab7\Slide\Canvas\CanvasInterface;
 interface DrawableInterface
 {
     public function draw(CanvasInterface $canvas): void;
-
-    public function addComponent(SlideComponentInterface $component): void;
 }

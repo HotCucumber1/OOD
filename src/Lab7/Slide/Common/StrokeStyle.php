@@ -12,4 +12,9 @@ class StrokeStyle
     )
     {
     }
+
+    public function __toString(): string
+    {
+        return $this->hexColor . ($this->isEnable ? 'true' : 'false') . $this->width;
+    }
 }
