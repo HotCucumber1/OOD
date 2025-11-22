@@ -15,10 +15,12 @@ add_subdirectory(src/Lab2/WeatherStation)
 add_subdirectory(src/Lab3/Beverage)
 add_subdirectory(src/Lab3/Stream)
 add_subdirectory(src/Lab6)
+add_subdirectory(src/Lab8/GumballMachine)
 
 add_subdirectory(tests/Unit/WeatherStation)
 add_subdirectory(tests/Unit/Beverage)
 add_subdirectory(tests/Unit/Stream)
 add_subdirectory(tests/Unit/Adapter)
+add_subdirectory(tests/Unit/GumballMachine)
 
 add_subdirectory(tests/Integration/Stream)
