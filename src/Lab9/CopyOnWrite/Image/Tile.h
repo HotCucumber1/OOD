@@ -4,17 +4,17 @@
 
 class Tile
 {
-	using Matrix = std::vector<std::vector<char>>;
+	using Matrix = std::vector<std::vector<uint32_t>>;
 
 public:
-	Tile(const unsigned w, const unsigned h, const char c)
+	Tile(const unsigned w, const unsigned h, const uint32_t c)
 		: m_tileMatrix(h, std::vector(w, c))
 		, m_size(w, h)
 	{
 		m_instanceCount++;
 	}
 
-	void SetPixel(const unsigned x, const unsigned y, const char c)
+	void SetPixel(const unsigned x, const unsigned y, const uint32_t c)
 	{
 		if (x >= m_size.width || y >= m_size.height)
 		{
@@ -23,7 +23,7 @@ public:
 		m_tileMatrix[y][x] = c;
 	}
 
-	char GetPixel(const unsigned x, const unsigned y) const
+	uint32_t GetPixel(const unsigned x, const unsigned y) const
 	{
 		if (x >= m_size.width || y >= m_size.height)
 		{

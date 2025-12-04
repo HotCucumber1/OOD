@@ -1,8 +1,126 @@
+#include "Drawer.h"
 #include "Image/Image.h"
 #include "Image/Point.h"
-#include "Drawer.h"
 
+#include <fstream>
 #include <iostream>
+
+std::vector<Point> GetRobot();
+std::vector<Point> GetBorders(int width, int height);
+void DrawSmile(ImageInterface& img);
+void DrawRobot(ImageInterface& image);
+void DrawCircle(ImageInterface& image);
+bool SaveToPPM(const ImageInterface& image, const std::string& filename);
+
+void DrawInConsole()
+{
+	auto img = Image(20, 20);
+
+	const auto borders = GetBorders(20, 20);
+	const auto robot = GetRobot();
+
+	for (const auto& point : borders)
+	{
+		img.SetPixel(point.x, point.y, '#');
+	}
+
+	// DrawRobot(img);
+	// DrawCircle(img);
+	DrawSmile(img);
+
+	Drawer::Print(img);
+}
+
+
+void DrawInPPM()
+{
+	constexpr int size = 16;
+	Image image(size, size);
+
+	const uint32_t pixels[16][16] = {
+		{ 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB },
+		{ 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB },
+		{ 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB },
+		{ 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB },
+		{ 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x9E6B4B, 0x9E6B4B, 0x9E6B4B, 0x9E6B4B, 0x9E6B4B, 0x9E6B4B, 0x9E6B4B, 0x9E6B4B, 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x87CEEB },
+		{ 0x87CEEB, 0x87CEEB, 0x87CEEB, 0x9E6B4B, 0x5C4033, 0xD8D8D8, 0x5C4033, 0x8B4513, 0x5C4033, 0xD8D8D8, 0x5C4033, 0x8B4513, 0x9E6B4B, 0x87CEEB, 0x87CEEB, 0x87CEEB },
+		{ 0x87CEEB, 0x87CEEB, 0x9E6B4B, 0xD4B48C, 0x8B4513, 0x5C4033, 0x8B4513, 0x5C4033, 0x8B4513, 0x5C4033, 0x8B4513, 0x5C4033, 0xD4B48C, 0x9E6B4B, 0x87CEEB, 0x87CEEB },
+		{ 0x87CEEB, 0x9E6B4B, 0xD4B48C, 0xD8D8D8, 0x8B4513, 0x5C4033, 0xD8D8D8, 0x5C4033, 0xD8D8D8, 0x5C4033, 0xD8D8D8, 0x5C4033, 0xD8D8D8, 0xD4B48C, 0x9E6B4B, 0x87CEEB },
+		{ 0x87CEEB, 0x9E6B4B, 0x9E6B4B, 0x8B4513, 0x8B4513, 0x5C4033, 0x8B4513, 0x5C4033, 0x8B4513, 0x5C4033, 0x8B4513, 0x5C4033, 0x8B4513, 0x9E6B4B, 0x9E6B4B, 0x87CEEB },
+		{ 0x87CEEB, 0x87CEEB, 0xC2B280, 0xC2B280, 0xC2B280, 0xC2B280, 0xC2B280, 0xC2B280, 0xC2B280, 0xC2B280, 0xC2B280, 0xC2B280, 0xC2B280, 0xC2B280, 0x87CEEB, 0x87CEEB },
+		{ 0x8B7355, 0xC2B280, 0xA0522D, 0xC2B280, 0xA0522D, 0xC2B280, 0xA0522D, 0xC2B280, 0xA0522D, 0xC2B280, 0xA0522D, 0xC2B280, 0xA0522D, 0xC2B280, 0xC2B280, 0x8B7355 },
+		{ 0x8B7355, 0x8B7355, 0x8B4513, 0x8B4513, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B4513, 0x8B4513, 0x8B7355, 0x8B7355 },
+		{ 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355 },
+		{ 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355 },
+		{ 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355 },
+		{ 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355, 0x8B7355 }
+	};
+
+	for (int y = 0; y < size; ++y)
+	{
+		for (int x = 0; x < size; ++x)
+		{
+			image.SetPixel(x, y, pixels[y][x]);
+		}
+	}
+
+	if (SaveToPPM(image, "output.ppm"))
+	{
+		std::cout << "Изображение сохранено в output.ppm" << std::endl;
+	}
+	else
+	{
+		std::cerr << "Ошибка сохранения файла" << std::endl;
+	}
+}
+
+int main()
+{
+	try
+	{
+		// DrawInConsole();
+		DrawInPPM();
+	}
+	catch (const std::exception& e)
+	{
+		std::cerr << e.what() << std::endl;
+		return 1;
+	}
+}
+
+bool SaveToPPM(const ImageInterface& image, const std::string& filename)
+{
+	std::ofstream file(filename, std::ios::binary);
+	if (!file.is_open())
+	{
+		return false;
+	}
+
+	const Size size = image.GetSize();
+
+	file << "P6\n";
+	file << size.width << " " << size.height << "\n";
+	file << "255\n";
+
+	for (unsigned y = 0; y < size.height; ++y)
+	{
+		for (unsigned x = 0; x < size.width; ++x)
+		{
+			const uint32_t color = image.GetPixel(x, y);
+
+			const auto r = (color >> 16) & 0xFF;
+			const auto g = (color >> 8) & 0xFF;
+			const auto b = color & 0xFF;
+
+			file.write(reinterpret_cast<const char*>(&r), 1);
+			file.write(reinterpret_cast<const char*>(&g), 1);
+			file.write(reinterpret_cast<const char*>(&b), 1);
+		}
+	}
+
+	file.close();
+	return true;
+}
 
 std::vector<Point> GetRobot()
 {
@@ -44,14 +162,14 @@ std::vector<Point> GetBorders(const int width, const int height)
 
 void DrawSmile(ImageInterface& img)
 {
-	Drawer::DrawLine(img, 5, 4, 15, 4, 'o');  // Верх
+	Drawer::DrawLine(img, 5, 4, 15, 4, 'o'); // Верх
 	Drawer::DrawLine(img, 5, 12, 15, 12, 'o'); // Низ
-	Drawer::DrawLine(img, 4, 5, 4, 11, 'o');   // Лево
+	Drawer::DrawLine(img, 4, 5, 4, 11, 'o'); // Лево
 	Drawer::DrawLine(img, 16, 5, 16, 11, 'o'); // Право
 
 	// Глаза
-	Drawer::DrawLine(img, 7, 6, 8, 6, '0');    // Левый глаз
-	Drawer::DrawLine(img, 12, 6, 13, 6, '0');  // Правый глаз
+	Drawer::DrawLine(img, 7, 6, 8, 6, '0'); // Левый глаз
+	Drawer::DrawLine(img, 12, 6, 13, 6, '0'); // Правый глаз
 
 	// Рот (улыбка)
 	Drawer::DrawLine(img, 7, 9, 13, 9, ')');
@@ -74,36 +192,7 @@ void DrawRobot(ImageInterface& image)
 
 void DrawCircle(ImageInterface& image)
 {
-	const Point circleCenter = {10, 10};
+	const Point circleCenter = { 10, 10 };
 	Drawer::FillCircle(image, circleCenter, 4, '#');
 	Drawer::DrawCircle(image, circleCenter, 7, '#');
-}
-
-int main()
-{
-	try
-	{
-		auto img = Image(20, 20);
-
-		const auto borders = GetBorders(20, 20);
-		const auto robot = GetRobot();
-
-		for (const auto& point : borders)
-		{
-			img.SetPixel(point.x, point.y, '#');
-		}
-
-		// DrawRobot(img);
-
-		// DrawCircle(img);
-
-		DrawSmile(img);
-
-		Drawer::Print(img);
-	}
-	catch (const std::exception& e)
-	{
-		std::cerr << e.what() << std::endl;
-		return 1;
-	}
 }

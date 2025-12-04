@@ -1,5 +1,6 @@
 #pragma once
 #include "Image/ImageInterface.h"
+#include "Image/Point.h"
 
 #include <iosfwd>
 #include <iostream>
@@ -126,7 +127,7 @@ inline void Print(
 	{
 		for (int j = 0; j < imgSize.width; ++j)
 		{
-			output << image.GetPixel(j, i);
+			output << static_cast<char>(image.GetPixel(j, i));
 		}
 		output << std::endl;
 	}

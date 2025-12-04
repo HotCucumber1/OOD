@@ -20,31 +20,7 @@ public:
 		InitImage(width, height);
 	}
 
-	// Image(const std::string& sourceStr)
-	// {
-	// 	size_t columnsCount = 0;
-	// 	std::string line;
-	// 	std::stringstream stream(sourceStr);
-	//
-	// 	int row = 0;
-	// 	while (std::getline(stream, line))
-	// 	{
-	// 		if (columnsCount == 0)
-	// 		{
-	// 			columnsCount = line.length();
-	// 		}
-	// 		for (int i = 0; i < columnsCount; i++)
-	// 		{
-	// 			m_
-	// 		}
-	//
-	//
-	//
-	// 		row++;
-	// 	}
-	// }
-
-	char GetPixel(const unsigned x, const unsigned y) const override
+	uint32_t GetPixel(const unsigned x, const unsigned y) const override
 	{
 		if (x >= m_size.width || y >= m_size.height)
 		{
@@ -58,7 +34,7 @@ public:
 			y % TILE_SIZE);
 	}
 
-	void SetPixel(const unsigned x, const unsigned y, const char color) override
+	void SetPixel(const unsigned x, const unsigned y, const uint32_t color) override
 	{
 		if (x >= m_size.width || y >= m_size.height)
 		{
