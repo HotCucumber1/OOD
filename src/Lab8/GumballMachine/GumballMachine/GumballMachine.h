@@ -1,9 +1,12 @@
 #pragma once
-#include "../State/IState.h"
-#include "../State/SoldOutState.h"
-#include "../State/NoQuarterState.h"
-#include "../State/SoldState.h"
 #include "../State/HasQuarterState.h"
+#include "../State/IState.h"
+#include "../State/MaxQuarterState.h"
+#include "../State/MinQuarterState.h"
+#include "../State/NoQuarterState.h"
+#include "../State/SoldOutState.h"
+#include "../State/SoldState.h"
+#include "../State/SomeQuartersState.h"
 #include "IGumballMachine.h"
 
 #include <format>
@@ -85,6 +88,21 @@ private:
 	void SetHasQuarterState() override
 	{
 		m_currentState.reset(new HasQuarterState(*this));
+	}
+
+	void SetMinQuarterState() override
+	{
+		m_currentState.reset(new MinQuarterState(*this));
+	}
+
+	void SetSomeQuarterState() override
+	{
+		m_currentState.reset(new SomeQuarterState(*this));
+	}
+
+	void SetMaxQuarterState() override
+	{
+		m_currentState.reset(new MaxQuarterState(*this));
 	}
 
 	unsigned m_count = 0;

@@ -121,3 +121,4 @@ TEST_CASE("Not empty gumball machine with money")
 		REQUIRE(capture.GetOutput() == "You inserted a quarter\nYou turned...\nA gumball comes rolling out the slot...\n");
 	}
 }
+
