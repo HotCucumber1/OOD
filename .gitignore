@@ -39,3 +39,4 @@ Thumbs.db
 
 # Composer-файлы (опционально)
 /composer.phar
+/yarn.lock
