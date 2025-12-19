@@ -86,12 +86,30 @@ class SlideView {
             if (event.key === 'Delete') {
                 callback();
             }
-        })
+        });
+    }
+
+    public onUndoKeyDown(callback: () => void): void {
+        document.addEventListener('keypress', (event) => {
+            if (event.ctrlKey && event.code === 'KeyZ' && !event.shiftKey) {
+                event.preventDefault();
+                callback();
+            }
+        });
+    }
+
+    public onRedoKeyDown(callback: () => void): void {
+        document.addEventListener('keypress', (event) => {
+            if (event.ctrlKey && event.shiftKey && event.code === 'KeyZ') {
+                event.preventDefault();
+                callback();
+            }
+        });
     }
 
     public getDefaultFrame(): Frame {
-        const defaultWidth = 200;
-        const defaultHeight = 200;
+        const defaultWidth = 100;
+        const defaultHeight = 100;
 
         return new Frame(
             this.canvas.width / 2 - defaultWidth / 2,

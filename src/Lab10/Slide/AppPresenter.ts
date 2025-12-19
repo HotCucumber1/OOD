@@ -24,6 +24,7 @@ class AppPresenter {
         private updateView: (props: AppViewProps) => void,
     ) {
         this.slidePresenter = new SlidePresenter(model, canvas);
+        model.registerObserver(this.slidePresenter);
 
         this.toolbarPresenter = new ToolbarPresenter(
             (shapeId) => this.onShapeSelected(shapeId),

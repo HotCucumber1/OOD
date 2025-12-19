@@ -2,11 +2,12 @@ import {DocumentModel} from "../Model/Entity/DocumentModel";
 import {SlideView} from "../View/SlideView";
 import type {SlideComponentInterface} from "../Model/Interface/SlideComponentInterface";
 import {type Color, Frame, type Point} from "../../Common/Common";
+import type {ObserverInterface} from "../../Common/Observer/ObserverInterface";
 
 
 type ShapeType = 'rectangle' | 'ellipse' | 'triangle';
 
-class SlidePresenter {
+class SlidePresenter implements ObserverInterface {
     private view: SlideView;
     private selected: SlideComponentInterface[] = [];
     private canDrag = false;
@@ -19,6 +20,10 @@ class SlidePresenter {
     ) {
         this.view = new SlideView(viewId);
         this.setupViewListeners();
+    }
+
+    public update(objects: SlideComponentInterface[]): void {
+        this.render();
     }
 
     public addShape(type: ShapeType, color: Color): void {
@@ -49,7 +54,6 @@ class SlidePresenter {
                 );
                 break;
         }
-        this.render();
     }
 
     public render(): void {
@@ -114,6 +118,14 @@ class SlidePresenter {
         this.view.onDeleteKeyDown(() => {
             this.handleDelete();
         });
+
+        this.view.onUndoKeyDown(() => {
+            this.model.undo();
+        });
+
+        this.view.onRedoKeyDown(() => {
+            this.model.redo();
+        });
     }
 
     private handleSelection(x: number, y: number): void {
@@ -143,13 +155,16 @@ class SlidePresenter {
             y: y,
         };
 
-        this.selected.forEach(object => {
-            object.setPosition(
-                object.getFrame().getTopLeft().x + offsetX,
-                object.getFrame().getTopLeft().y + offsetY,
-            );
-        });
-        this.render();
+        const objectsMap = this.model.getObjects();
+        for (const [key, val] of objectsMap.entries()) {
+            if (this.selected.includes(val)) {
+                this.model.changeObjectPosition(
+                    key,
+                    val.getFrame().getTopLeft().x + offsetX,
+                    val.getFrame().getTopLeft().y + offsetY,
+                );
+            }
+        }
     }
 
     private handleDelete(): void {
@@ -164,7 +179,6 @@ class SlidePresenter {
 
         this.selected = [];
         this.model.deleteObjects(toDelete);
-        this.render();
     }
 
     private isObjectClicked(object: SlideComponentInterface, x: number, y: number): boolean {

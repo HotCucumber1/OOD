@@ -9,7 +9,7 @@ class ImageSaveStrategy implements ImageSaveStrategyInterface
 {
     private const string DST_DIR = 'images/';
 
-    public function saveImage(string $sourceUrl): string // TODO (перенести в команду и так там)
+    public function saveImage(string $sourceUrl): string
     {
         $extension = pathinfo($sourceUrl, PATHINFO_EXTENSION);
         $newName = Uuid::uuid4()->toString() . '.' . $extension;
