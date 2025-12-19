@@ -4,7 +4,7 @@ import {
     Frame,
     type Color,
     type Point,
-} from "../../Common/Common";
+} from "../../../Common/Common";
 
 class Ellipse extends AbstractShape {
     private center: Point;
@@ -67,8 +67,20 @@ class Ellipse extends AbstractShape {
 
         this.frame = frame;
     }
+
+    public getCenter(): Point {
+        return this.center;
+    }
+
+    public getRadiusX(): number {
+        return this.rx;
+    }
+
+    public getRadiusY(): number {
+        return this.ry;
+    }
 }
 
 export {
     Ellipse,
-}
+};

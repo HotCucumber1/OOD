@@ -1,6 +1,6 @@
 import {AbstractSlideObject} from "./AbstractSlideObject";
 import type {SlideComponentInterface} from "../Interface/SlideComponentInterface";
-import {Frame} from "../../Common/Common";
+import {Frame} from "../../../Common/Common";
 
 class Image extends AbstractSlideObject {
     public constructor(
@@ -32,6 +32,10 @@ class Image extends AbstractSlideObject {
 
     public setFrame(frame: Frame): void {
         this.frame = frame;
+    }
+
+    public getImgPath(): string {
+        return this.imgPath;
     }
 }
 

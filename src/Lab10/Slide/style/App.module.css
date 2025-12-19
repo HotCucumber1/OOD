@@ -1,0 +1,211 @@
+/* src/App.module.css */
+.app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background: #0f172a;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+.mainContent {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    padding: 24px;
+    gap: 24px;
+}
+
+.canvasContainer {
+    flex: 1;
+    position: relative;
+    background: #1e293b;
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.canvas {
+    display: block;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
+    max-width: calc(100% - 40px);
+    max-height: calc(100% - 40px);
+    object-fit: contain;
+}
+
+.canvasOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 20px;
+}
+
+.instructions {
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    padding: 16px 24px;
+    border-radius: 12px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 14px;
+    text-align: center;
+    max-width: 400px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.instructions p {
+    margin: 4px 0;
+}
+
+.sidePanel {
+    width: 300px;
+    background: #1e293b;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.panelSection {
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.panelSection:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.panelTitle {
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    letter-spacing: 0.5px;
+}
+
+.property {
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.property label {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 14px;
+}
+
+.property span {
+    color: white;
+    font-weight: 500;
+    background: rgba(0, 180, 216, 0.2);
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+}
+
+.stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding: 8px 0;
+}
+
+.statLabel {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 14px;
+}
+
+.statValue {
+    color: white;
+    font-weight: 600;
+    background: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%);
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    min-width: 80px;
+    text-align: center;
+}
+
+/* Анимация появления canvas */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.canvasContainer, .sidePanel {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+/* Адаптивность */
+@media (max-width: 1024px) {
+    .mainContent {
+        flex-direction: column;
+    }
+
+    .sidePanel {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 32px;
+    }
+
+    .panelSection {
+        flex: 1;
+        border-bottom: none;
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+        padding-right: 24px;
+    }
+
+    .panelSection:last-child {
+        border-right: none;
+        padding-right: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .mainContent {
+        padding: 16px;
+    }
+
+    .sidePanel {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .panelSection {
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding-right: 0;
+        padding-bottom: 16px;
+    }
+
+    .panelSection:last-child {
+        padding-bottom: 0;
+    }
+
+    .instructions {
+        display: none;
+    }
+}

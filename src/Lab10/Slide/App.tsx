@@ -1,9 +1,61 @@
+import {
+    useEffect,
+    useRef,
+    useState,
+} from "react";
+import styles from './style/App.module.css';
+import {DocumentModel} from "./Editor/Model/Entity/DocumentModel";
+import {JsonSaver} from "./Editor/Model/Service/JsonSaver";
+import {AppPresenter} from "./AppPresenter";
+import {TopToolbar} from "./ToolBar/View/TopToolbar";
+import type {ToolbarViewProps} from "./ToolBar/Presenter/ToolBarPresenter";
+
 function App() {
-    return <div>
+    const canvasId = "slide-canvas";
+    const model = new DocumentModel(new JsonSaver());
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const presenterRef = useRef<AppPresenter>(null);
 
-    </div>
+    const [toolbarProps, setToolbarProps] = useState<ToolbarViewProps>({
+        tools: [],
+        selectedTool: '',
+        onToolSelect: () => {
+        },
+        onImageUpload: () => {
+        },
+        onAddShape: () => {
+        }
+    });
+
+    useEffect(() => {
+        if (canvasRef.current && !presenterRef.current) {
+             presenterRef.current = new AppPresenter(
+                model,
+                canvasId,
+                (props) => setToolbarProps(props.toolbarProps),
+            );
+
+            return () => {
+                presenterRef.current?.destroy();
+            };
+        }
+    }, []);
+
+    return (
+        <div className={styles.app}>
+            <TopToolbar {...toolbarProps} />
+
+            <main className={styles.mainContent}>
+                <div className={styles.canvasContainer}>
+                    <canvas
+                        id={canvasId}
+                        ref={canvasRef}
+                        className={styles.canvas}
+                    />
+                </div>
+            </main>
+        </div>
+    );
 }
 
-export {
-    App,
-}
+export {App};

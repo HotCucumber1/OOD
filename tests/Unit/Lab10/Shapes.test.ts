@@ -1,4 +1,4 @@
-import {Ellipse} from "../../../src/Lab10/Slide/Model/Entity/Ellipse";
+import {Ellipse} from "../../../src/Lab10/Slide/Editor/Model/Entity/Ellipse";
 
 describe('Ellipse', () => {
     it('Create ellipse success', () => {

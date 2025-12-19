@@ -1,0 +1,242 @@
+/* src/Toolbar/TopToolbar.module.css */
+.toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    padding: 0 24px;
+    height: 64px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-right: 32px;
+}
+
+.logoIcon {
+    font-size: 24px;
+    color: #00b4d8;
+    animation: pulse 2s infinite;
+}
+
+.logoText {
+    font-size: 18px;
+    font-weight: 700;
+    color: white;
+    letter-spacing: 0.5px;
+}
+
+.toolbarSection {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex: 1;
+}
+
+.sectionTitle {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    min-width: 80px;
+}
+
+.shapeButtons {
+    display: flex;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 4px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.shapeButton {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-size: 14px;
+}
+
+.shapeButton:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    transform: translateY(-1px);
+}
+
+.shapeButton.selected {
+    background: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 180, 216, 0.4);
+}
+
+.shapeIcon {
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 1;
+}
+
+.shapeName {
+    font-weight: 500;
+}
+
+.toolbarActions {
+    display: flex;
+    gap: 12px;
+    margin-left: 32px;
+}
+
+.addButton {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    box-shadow: 0 4px 15px rgba(0, 180, 216, 0.4);
+}
+
+.addButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 180, 216, 0.6);
+}
+
+.addButton:active {
+    transform: translateY(0);
+}
+
+.addIcon {
+    font-size: 18px;
+    font-weight: 300;
+}
+
+.imageButton {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 10px 20px;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.imageButton:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.imageIcon {
+    font-size: 16px;
+}
+
+.toolbarStatus {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 32px;
+    padding-left: 20px;
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.statusDot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #00b4d8;
+    animation: blink 2s infinite;
+}
+
+.statusText {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 13px;
+    font-weight: 500;
+}
+
+/* Анимации */
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+/* Адаптивность */
+@media (max-width: 1200px) {
+    .toolbar {
+        flex-wrap: wrap;
+        height: auto;
+        padding: 12px 24px;
+        gap: 12px;
+    }
+
+    .toolbarSection {
+        order: 2;
+        width: 100%;
+        margin-top: 12px;
+    }
+
+    .logo {
+        margin-right: 0;
+    }
+
+    .toolbarActions {
+        margin-left: auto;
+    }
+
+    .toolbarStatus {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .shapeName,
+    .addText,
+    .imageText {
+        display: none;
+    }
+
+    .shapeButton {
+        padding: 8px 12px;
+    }
+
+    .addButton,
+    .imageButton {
+        padding: 10px 12px;
+    }
+
+    .toolbar {
+        padding: 8px 16px;
+    }
+}

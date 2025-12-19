@@ -1,5 +1,5 @@
 import {AbstractShape} from "./AbstractShape";
-import {Frame, type Color} from "../../Common/Common";
+import {Frame, type Color} from "../../../Common/Common";
 import type {SlideComponentInterface} from "../Interface/SlideComponentInterface";
 
 class Rectangle extends AbstractShape {

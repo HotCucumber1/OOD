@@ -1,5 +1,5 @@
 import {AbstractShape} from "./AbstractShape";
-import {type Color, Frame, type Point} from "../../Common/Common";
+import {type Color, Frame, type Point} from "../../../Common/Common";
 import type {SlideComponentInterface} from "../Interface/SlideComponentInterface";
 
 interface TrianglePoints {
@@ -47,6 +47,10 @@ class Triangle extends AbstractShape {
             },
             this.color,
         );
+    }
+
+    public getVertices(): [Point, Point, Point] {
+        return this.vertices;
     }
 
     private transformVertex(

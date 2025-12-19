@@ -1,4 +1,4 @@
-import {Frame} from "../../Common/Common";
+import {Frame} from "../../../Common/Common";
 import type {SlideComponentInterface} from "../Interface/SlideComponentInterface";
 import type {GroupInterface} from "../Interface/GroupInterface";
 

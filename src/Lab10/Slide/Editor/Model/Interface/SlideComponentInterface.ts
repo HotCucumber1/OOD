@@ -1,4 +1,4 @@
-import type {Frame} from "../../Common/Common";
+import type {Frame} from "../../../Common/Common";
 import type {ObjectGroup} from "../Entity/ObjectGroup";
 import type {CopyableInterface} from "./CopyableInterface";
 
