@@ -33,8 +33,7 @@ class SlidePresenter {
                 );
                 break;
             case "ellipse":
-                this.model.addEllipse(
-                    {
+                this.model.addEllipse({
                         x: position.getTopLeft().x + position.getWidth() / 2,
                         y: position.getTopLeft().y + position.getHeight() / 2,
                     },
@@ -111,6 +110,10 @@ class SlidePresenter {
         this.view.onMouseMove((x: number, y: number) => {
             this.handleDrag(x, y);
         });
+
+        this.view.onDeleteKeyDown(() => {
+            this.handleDelete();
+        });
     }
 
     private handleSelection(x: number, y: number): void {
@@ -138,7 +141,7 @@ class SlidePresenter {
         this.dragLastPosition = {
             x: x,
             y: y,
-        }
+        };
 
         this.selected.forEach(object => {
             object.setPosition(
@@ -146,6 +149,21 @@ class SlidePresenter {
                 object.getFrame().getTopLeft().y + offsetY,
             );
         });
+        this.render();
+    }
+
+    private handleDelete(): void {
+        let toDelete = [];
+
+        const objectsMap = this.model.getObjects();
+        for (const [key, val] of objectsMap.entries()) {
+            if (this.selected.includes(val)) {
+                toDelete.push(key);
+            }
+        }
+
+        this.selected = [];
+        this.model.deleteObjects(toDelete);
         this.render();
     }
 

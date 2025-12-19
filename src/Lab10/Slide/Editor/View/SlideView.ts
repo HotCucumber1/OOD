@@ -81,10 +81,17 @@ class SlideView {
         });
     }
 
+    public onDeleteKeyDown(callback: () => void): void {
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Delete') {
+                callback();
+            }
+        })
+    }
 
     public getDefaultFrame(): Frame {
         const defaultWidth = 200;
-        const defaultHeight = 100;
+        const defaultHeight = 200;
 
         return new Frame(
             this.canvas.width / 2 - defaultWidth / 2,

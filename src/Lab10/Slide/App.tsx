@@ -5,14 +5,20 @@ import {
 } from "react";
 import styles from './style/App.module.css';
 import {DocumentModel} from "./Editor/Model/Entity/DocumentModel";
-import {JsonSaver} from "./Editor/Model/Service/JsonSaver";
 import {AppPresenter} from "./AppPresenter";
 import {TopToolbar} from "./ToolBar/View/TopToolbar";
 import type {ToolbarViewProps} from "./ToolBar/Presenter/ToolBarPresenter";
 
-function App() {
-    const canvasId = "slide-canvas";
-    const model = new DocumentModel(new JsonSaver());
+type AppProps = {
+    model: DocumentModel,
+    canvasId: string,
+}
+
+function App({
+                 model,
+                 canvasId,
+             }: AppProps) {
+
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const presenterRef = useRef<AppPresenter>(null);
 
@@ -58,4 +64,7 @@ function App() {
     );
 }
 
-export {App};
+export {
+    App,
+    type AppProps,
+};

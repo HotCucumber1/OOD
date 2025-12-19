@@ -52,6 +52,12 @@ class DocumentModel implements ObservableInterface {
         return this.storeObject(img);
     }
 
+    public deleteObjects(objectsIds: string[]): void {
+        objectsIds.forEach(id => {
+            this.items.delete(id);
+        })
+    }
+
     public resizeObject(objectId: string, newWidth: number, newHeight: number): void {
         const object = this.getObject(objectId);
         object.resize(newWidth, newHeight);
