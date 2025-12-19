@@ -20,12 +20,12 @@ abstract class AbstractSlideObject implements SlideComponentInterface {
         const deltaX = this.frame.getTopLeft().x - newX;
         const deltaY = this.frame.getTopLeft().y - newY;
 
-        this.frame = new Frame(
+        this.setFrame(new Frame(
             newX,
             newY,
             this.frame.getBottomRight().x - deltaX,
             this.frame.getBottomRight().y - deltaY,
-        );
+        ));
     }
 
     resize(newWidth: number, newHeight: number) {
@@ -33,21 +33,19 @@ abstract class AbstractSlideObject implements SlideComponentInterface {
         let newBottomRightY = this.frame.getTopLeft().y + newHeight;
 
         const position = this.frame.getTopLeft();
-        if (position.x > newBottomRightX)
-        {
+        if (position.x > newBottomRightX) {
             [position.x, newBottomRightX] = [newBottomRightX, position.x];
         }
-        if (position.y > newBottomRightY)
-        {
-            [position.y, newBottomRightY] = [ newBottomRightY, position.y];
+        if (position.y > newBottomRightY) {
+            [position.y, newBottomRightY] = [newBottomRightY, position.y];
         }
 
-        this.frame = new Frame(
+        this.setFrame(new Frame(
             position.x,
             position.y,
             newBottomRightX,
             newBottomRightY,
-        );
+        ));
     }
 
 

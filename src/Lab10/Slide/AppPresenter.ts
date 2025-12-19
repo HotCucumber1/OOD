@@ -34,7 +34,6 @@ class AppPresenter {
         this.updateViewState();
 
         this.addRectangle();
-        this.addEllipse();
         this.slidePresenter.addShape('ellipse', {hex: "#AABBCC"});
     }
 
@@ -92,4 +91,4 @@ class AppPresenter {
 export {
     AppPresenter,
     type AppViewProps,
-}
+};

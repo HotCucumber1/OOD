@@ -33,8 +33,6 @@
     background: white;
     border-radius: 8px;
     box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
-    max-width: calc(100% - 40px);
-    max-height: calc(100% - 40px);
     object-fit: contain;
 }
 

@@ -9,6 +9,8 @@ module.exports = {
         'semi': ['error', 'always'],
         '@typescript-eslint/semi': ['error', 'always'],
 
+        "brace-style": ["error", "1tbs", { "allowSingleLine": true }],
+
         'no-extra-semi': 'error',
         '@typescript-eslint/no-extra-semi': 'error',
 

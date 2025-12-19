@@ -1,4 +1,3 @@
-import type {ViewInterface} from "../View/ViewInterface";
 import {DocumentModel} from "../Model/Entity/DocumentModel";
 import {SlideView} from "../View/SlideView";
 import type {SlideComponentInterface} from "../Model/Interface/SlideComponentInterface";
@@ -8,8 +7,11 @@ import {type Color, Frame, type Point} from "../../Common/Common";
 type ShapeType = 'rectangle' | 'ellipse' | 'triangle';
 
 class SlidePresenter {
-    private view: ViewInterface;
+    private view: SlideView;
     private selected: SlideComponentInterface[] = [];
+    private canDrag = false;
+
+    private dragLastPosition: Point = {x: 0, y: 0};
 
     public constructor(
         private model: DocumentModel,
@@ -52,9 +54,8 @@ class SlidePresenter {
     }
 
     public render(): void {
-        this.view.renderObjects(
-            Array.from(this.model.getObjects().values()),
-        );
+        this.view.renderObjects(this.getObjects());
+        this.view.renderSelection(this.selected);
     }
 
     public addImage(src: string): void {
@@ -66,6 +67,10 @@ class SlidePresenter {
             position.getHeight(),
             src,
         );
+    }
+
+    private getObjects(): SlideComponentInterface[] {
+        return Array.from(this.model.getObjects().values());
     }
 
     public destroy(): void {
@@ -89,13 +94,67 @@ class SlidePresenter {
     }
 
     private setupViewListeners(): void {
-        console.log('Setup');
-        this.view.onObjectClick((objectId) => {
-            this.handleObjectClick(objectId);
+        this.view.onObjectClick((x: number, y: number) => {
+            this.handleSelection(x, y);
+        });
+
+        this.view.onMouseDown((x: number, y: number) => {
+            this.canDrag = true;
+            this.dragLastPosition = {x: x, y: y};
+        });
+
+        this.view.onMouseUp((x: number, y: number) => {
+            this.canDrag = false;
+            this.dragLastPosition = {x: 0, y: 0};
+        });
+
+        this.view.onMouseMove((x: number, y: number) => {
+            this.handleDrag(x, y);
         });
     }
 
-    private handleObjectClick(objectId: string): void {
+    private handleSelection(x: number, y: number): void {
+        const objects = this.getObjects();
+
+        this.selected = [];
+
+        for (const object of objects.reverse()) {
+            if (this.isObjectClicked(object, x, y) && !this.selected.includes(object)) {
+                this.selected.push(object);
+                break;
+            }
+        }
+        this.render();
+    }
+
+    private handleDrag(x: number, y: number): void {
+        if (!this.canDrag) {
+            return;
+        }
+
+        const offsetX = x - this.dragLastPosition.x;
+        const offsetY = y - this.dragLastPosition.y;
+
+        this.dragLastPosition = {
+            x: x,
+            y: y,
+        }
+
+        this.selected.forEach(object => {
+            object.setPosition(
+                object.getFrame().getTopLeft().x + offsetX,
+                object.getFrame().getTopLeft().y + offsetY,
+            );
+        });
+        this.render();
+    }
+
+    private isObjectClicked(object: SlideComponentInterface, x: number, y: number): boolean {
+        const frame = object.getFrame();
+        // TODO логика нажатия
+
+        return frame.getTopLeft().x <= x && x <= frame.getBottomRight().x &&
+            frame.getTopLeft().y <= y && y <= frame.getBottomRight().y;
     }
 }
 

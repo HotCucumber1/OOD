@@ -1,19 +1,17 @@
-import type {ViewInterface} from "./ViewInterface";
 import type {SlideComponentInterface} from "../Model/Interface/SlideComponentInterface";
-import {Frame} from "../../Common/Common";
+import {Frame, type Point} from "../../Common/Common";
 import {Rectangle} from "../Model/Entity/Rectangle";
 import {AbstractShape} from "../Model/Entity/AbstractShape";
 import {Ellipse} from "../Model/Entity/Ellipse";
 import {Triangle} from "../Model/Entity/Triangle";
 import {Image} from "../Model/Entity/Image";
 
-class SlideView implements ViewInterface {
-    private WIDTH = 1000;
-    private HEIGHT = 500;
+class SlideView {
+    private WIDTH = 2000;
+    private HEIGHT = 900;
 
     private canvas: HTMLCanvasElement;
     private context: CanvasRenderingContext2D;
-    private items = new Map<string, SlideComponentInterface>();
 
     public constructor(canvasId: string) {
         const element = document.getElementById(canvasId);
@@ -31,7 +29,9 @@ class SlideView implements ViewInterface {
         this.context = ctx;
     }
 
-    public renderObjects(objects: SlideComponentInterface[]) {
+    public renderObjects(objects: SlideComponentInterface[]): void {
+        this.context.clearRect(0, 0, this.WIDTH, this.HEIGHT);
+
         objects.forEach((object) => {
             if (object instanceof AbstractShape) {
                 this.context.fillStyle = object.getColor().hex;
@@ -51,21 +51,36 @@ class SlideView implements ViewInterface {
         });
     }
 
-    public onObjectClick(callback: (objectId: string) => void): void {
-        this.canvas.addEventListener('click', (event) => {
-            const objectId = this.findShapeOnCoords(event.clientX, event.clientY);
-
-            console.log('Click');
-
-            if (objectId) {
-                callback(objectId);
-            }
+    public renderSelection(objects: SlideComponentInterface[]): void {
+        objects.forEach(object => {
+            this.drawHandleBorder(object);
         });
     }
 
-    public onMouseMove(callback: (objectId: string) => void): void {
-        throw new Error("Method not implemented.");
+    public onObjectClick(callback: (x: number, y: number) => void): void {
+        this.canvas.addEventListener('click', (event) => {
+            this.executeAction(event, callback);
+        });
     }
+
+    public onMouseDown(callback: (x: number, y: number) => void): void {
+        this.canvas.addEventListener('mousedown', (event) => {
+            this.executeAction(event, callback);
+        });
+    }
+
+    public onMouseMove(callback: (x: number, y: number) => void): void {
+        this.canvas.addEventListener('mousemove', (event) => {
+            this.executeAction(event, callback);
+        });
+    }
+
+    public onMouseUp(callback: (x: number, y: number) => void): void {
+        this.canvas.addEventListener('mouseup', (event) => {
+            this.executeAction(event, callback);
+        });
+    }
+
 
     public getDefaultFrame(): Frame {
         const defaultWidth = 200;
@@ -77,6 +92,45 @@ class SlideView implements ViewInterface {
             this.canvas.width / 2 + defaultWidth / 2,
             this.canvas.height / 2 + defaultHeight / 2,
         );
+    }
+
+    private drawHandleBorder(object: SlideComponentInterface): void {
+        const frame = object.getFrame();
+        const topLeft = frame.getTopLeft();
+        const bottomRight = frame.getBottomRight();
+        const width = frame.getWidth();
+        const height = frame.getHeight();
+
+        this.context.strokeStyle = '#00f';
+        this.context.lineWidth = 2;
+        this.context.strokeRect(
+            topLeft.x,
+            topLeft.y,
+            width,
+            height
+        );
+
+        const handleSize = 8;
+        const offset = (handleSize / 2);
+
+        this.drawHandle(topLeft.x - offset, topLeft.y - offset);
+        this.drawHandle(topLeft.x + width / 2 - offset, topLeft.y - offset);
+        this.drawHandle(bottomRight.x - offset, topLeft.y - offset);
+
+        this.drawHandle(topLeft.x - offset, topLeft.y + height / 2 - offset);
+        this.drawHandle(bottomRight.x - offset, topLeft.y + height / 2 - offset);
+
+        this.drawHandle(topLeft.x - offset, bottomRight.y - offset);
+        this.drawHandle(topLeft.x + width / 2 - offset, bottomRight.y - offset);
+        this.drawHandle(bottomRight.x - offset, bottomRight.y - offset);
+    }
+
+    private drawHandle(x: number, y: number): void { // TODO в константы
+        this.context.fillStyle = '#00f';
+        this.context.fillRect(x, y, 8, 8);
+        this.context.strokeStyle = '#fff';
+        this.context.lineWidth = 1;
+        this.context.strokeRect(x, y, 8, 8);
     }
 
     private drawRect(rectangle: Rectangle): void {
@@ -114,6 +168,21 @@ class SlideView implements ViewInterface {
         this.context.fill();
     }
 
+    private executeAction(event: PointerEvent | MouseEvent, callback: (x: number, y: number) => void): void {
+        const point = this.getSlideCoords(event);
+        callback(point.x, point.y);
+    }
+
+
+    private getSlideCoords(event: PointerEvent | MouseEvent): Point {
+        const rect = this.canvas.getBoundingClientRect();
+
+        return {
+            x: event.clientX - rect.left,
+            y: event.clientY - rect.top,
+        };
+    }
+
     private async drawImage(image: Image): Promise<void> {
         try {
             const img = await this.loadImage(image.getImgPath());
@@ -139,16 +208,11 @@ class SlideView implements ViewInterface {
             img.crossOrigin = 'anonymous';
 
             img.onload = () => resolve(img);
-            img.onerror = (error) => reject(new Error(`Failed to load image: ${url}`));
+            img.onerror = () => reject(new Error(`Failed to load image: ${url}`));
 
             img.src = url;
         });
     }
-
-    private findShapeOnCoords(x: number, y: number): string {
-        return '';
-    }
-
 }
 
 export {

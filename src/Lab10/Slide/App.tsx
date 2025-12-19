@@ -29,7 +29,7 @@ function App() {
 
     useEffect(() => {
         if (canvasRef.current && !presenterRef.current) {
-             presenterRef.current = new AppPresenter(
+            presenterRef.current = new AppPresenter(
                 model,
                 canvasId,
                 (props) => setToolbarProps(props.toolbarProps),
