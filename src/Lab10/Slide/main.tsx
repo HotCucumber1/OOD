@@ -12,9 +12,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             model={model}
             canvasId={'slide1'}
         />
-        {/*<App*/}
-        {/*    model={model}*/}
-        {/*    canvasId={'slide2'}*/}
-        {/*/>*/}
+        <App
+            model={model}
+            canvasId={'slide2'}
+        />
     </React.StrictMode>
 );

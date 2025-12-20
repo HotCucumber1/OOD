@@ -1,6 +1,6 @@
 import type {Frame} from "../../../Common/Common";
-import type {ObjectGroup} from "../Entity/ObjectGroup";
 import type {CopyableInterface} from "./CopyableInterface";
+import type {GroupInterface} from "./GroupInterface";
 
 interface SlideComponentInterface extends CopyableInterface {
     setPosition(newX: number, newY: number): void;
@@ -11,7 +11,9 @@ interface SlideComponentInterface extends CopyableInterface {
 
     setFrame(frame: Frame): void;
 
-    getGroup(): ObjectGroup | null;
+    getGroup(): GroupInterface | null;
+
+    // serialize(): string;
 }
 
 export type {

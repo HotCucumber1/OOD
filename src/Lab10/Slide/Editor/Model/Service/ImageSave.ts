@@ -10,8 +10,8 @@ class ImageSave implements ImageSaveStrategyInterface {
     private DST_DIR = './uploads';
 
     public save(sourceUrl: string): string {
-        const extension = path.extname(sourceUrl);
-        const newName = `$crypto.randomUUID()}${extension}`;
+        const extension = this.getFileExtension(sourceUrl);
+        const newName = `${crypto.randomUUID()}${extension}`;
 
         const targetDir = this.DST_DIR;
 
@@ -24,11 +24,16 @@ class ImageSave implements ImageSaveStrategyInterface {
             }
         }
 
-        const fileUrl = path.join(targetDir, newName);
+        const fileUrl = targetDir + '/' + newName;
         fs.copyFile(sourceUrl, fileUrl, () => {
         });
 
         return fileUrl;
+    }
+
+    private getFileExtension(filename: string): string {
+        const lastDotIndex = filename.lastIndexOf('.');
+        return lastDotIndex !== -1 ? filename.slice(lastDotIndex + 1) : '';
     }
 }
 

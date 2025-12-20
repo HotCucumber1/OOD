@@ -22,13 +22,13 @@ class AddImageTask extends AbstractAddObjectTask {
 
     protected doExecute() {
 
-        this.newUrl = this.imageService.save(this.src);
+        // this.newUrl = this.imageService.save(this.src);
         const img = new Image(
             this.pos.x,
             this.pos.y,
             this.width,
             this.height,
-            this.newUrl,
+            this.src,
         );
         this.storeObject(img);
         this.isToDelete = false;

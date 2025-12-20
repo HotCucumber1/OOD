@@ -8,10 +8,15 @@ import {Image} from "../Model/Entity/Image";
 
 class SlideView {
     private WIDTH = 2000;
-    private HEIGHT = 900;
+    private HEIGHT = 840;
+    private BORDER_COLOR = '#00f';
+    private RESIZE_HANDLE_SIZE = 8;
 
     private canvas: HTMLCanvasElement;
     private context: CanvasRenderingContext2D;
+
+    private imageCache = new Map<string, HTMLImageElement>();
+    private pendingImageLoads = new Map<string, Promise<HTMLImageElement>>();
 
     public constructor(canvasId: string) {
         const element = document.getElementById(canvasId);
@@ -46,7 +51,7 @@ class SlideView {
                 this.drawTriangle(object);
             }
             if (object instanceof Image) {
-                this.drawImage(object);
+                this.drawCachedImage(object);
             }
         });
     }
@@ -62,21 +67,25 @@ class SlideView {
             this.executeAction(event, callback);
         });
     }
+    // TODO пропадает select у второй фигуры после ctrl + DND
+    // TODO сделать так, чтобы фигуры при мультиселекете не уезжали за границу
+    // TODO history на удаление группы объектов
 
     public onMouseDown(callback: (x: number, y: number) => void): void {
         this.canvas.addEventListener('mousedown', (event) => {
             this.executeAction(event, callback);
         });
+        // TODO тут тоже селект и ловить на окне
     }
 
     public onMouseMove(callback: (x: number, y: number) => void): void {
         this.canvas.addEventListener('mousemove', (event) => {
             this.executeAction(event, callback);
-        });
+        }); // TODO чекать, где клик, коммитт толкьо конечного состояния
     }
 
     public onMouseUp(callback: (x: number, y: number) => void): void {
-        this.canvas.addEventListener('mouseup', (event) => {
+        document.addEventListener('mouseup', (event) => {
             this.executeAction(event, callback);
         });
     }
@@ -107,6 +116,22 @@ class SlideView {
         });
     }
 
+    public onCollectKeyDown(callback: () => void): void {
+        document.addEventListener('keydown', event => {
+            if (event.code === 'ControlLeft') {
+                callback();
+            }
+        });
+    }
+
+    public onCollectKeyUp(callback: () => void): void {
+        document.addEventListener('keyup', event => {
+            if (event.code === 'ControlLeft') {
+                callback();
+            }
+        });
+    }
+
     public getDefaultFrame(): Frame {
         const defaultWidth = 100;
         const defaultHeight = 100;
@@ -126,7 +151,7 @@ class SlideView {
         const width = frame.getWidth();
         const height = frame.getHeight();
 
-        this.context.strokeStyle = '#00f';
+        this.context.strokeStyle = this.BORDER_COLOR;
         this.context.lineWidth = 2;
         this.context.strokeRect(
             topLeft.x,
@@ -135,8 +160,7 @@ class SlideView {
             height
         );
 
-        const handleSize = 8;
-        const offset = (handleSize / 2);
+        const offset = (this.RESIZE_HANDLE_SIZE / 2);
 
         this.drawHandle(topLeft.x - offset, topLeft.y - offset);
         this.drawHandle(topLeft.x + width / 2 - offset, topLeft.y - offset);
@@ -150,12 +174,12 @@ class SlideView {
         this.drawHandle(bottomRight.x - offset, bottomRight.y - offset);
     }
 
-    private drawHandle(x: number, y: number): void { // TODO в константы
-        this.context.fillStyle = '#00f';
-        this.context.fillRect(x, y, 8, 8);
+    private drawHandle(x: number, y: number): void {
+        this.context.fillStyle = this.BORDER_COLOR;
+        this.context.fillRect(x, y, this.RESIZE_HANDLE_SIZE, this.RESIZE_HANDLE_SIZE);
         this.context.strokeStyle = '#fff';
         this.context.lineWidth = 1;
-        this.context.strokeRect(x, y, 8, 8);
+        this.context.strokeRect(x, y, this.RESIZE_HANDLE_SIZE, this.RESIZE_HANDLE_SIZE);
     }
 
     private drawRect(rectangle: Rectangle): void {
@@ -208,23 +232,54 @@ class SlideView {
         };
     }
 
-    private async drawImage(image: Image): Promise<void> {
+    private async drawCachedImage(image: Image): Promise<void> {
+        const url = image.getImgPath();
+
+        if (this.imageCache.has(url)) {
+            const cachedImg = this.imageCache.get(url)!;
+            this.drawImageToCanvas(cachedImg, image);
+            return;
+        }
+
+        if (this.pendingImageLoads.has(url)) {
+            try {
+                const img = await this.pendingImageLoads.get(url)!;
+                this.drawImageToCanvas(img, image);
+            } catch (error) {
+                console.error('Error loading pending image:', error);
+            }
+            return;
+        }
+
+        const loadPromise = this.loadImage(url);
+        this.pendingImageLoads.set(url, loadPromise);
+
         try {
-            const img = await this.loadImage(image.getImgPath());
+            const img = await loadPromise;
+            this.imageCache.set(url, img);
+            this.pendingImageLoads.delete(url);
 
-            this.context.drawImage(img, 100, 100);
-            this.context.drawImage(img, 200, 200, 150, 100);
-
-            this.context.drawImage(
-                img,
-                image.getFrame().getTopLeft().x,
-                image.getFrame().getTopLeft().y,
-                image.getFrame().getWidth(),
-                image.getFrame().getHeight(),
-            );
+            this.drawImageToCanvas(img, image);
         } catch (error) {
             console.error('Error loading image:', error);
+            this.pendingImageLoads.delete(url);
         }
+    }
+
+    private drawImageToCanvas(img: HTMLImageElement, image: Image): void {
+        const frame = image.getFrame();
+
+        if (!img.complete || img.naturalWidth === 0) {
+            return;
+        }
+
+        this.context.drawImage(
+            img,
+            frame.getTopLeft().x,
+            frame.getTopLeft().y,
+            frame.getWidth(),
+            frame.getHeight(),
+        );
     }
 
     private async loadImage(url: string): Promise<HTMLImageElement> {

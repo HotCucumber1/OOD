@@ -2,14 +2,20 @@ import React from 'react';
 import styles from './Toolbar.module.css';
 import type {ToolbarViewProps} from "../Presenter/ToolBarPresenter";
 
+interface TopToolbarProps extends ToolbarViewProps {
+    selectedColor: string;
+    onColorChange: (color: string) => void;
+}
 
 function TopToolbar({
     tools,
     selectedTool,
     onToolSelect,
+    selectedColor,
+    onColorChange,
     onImageUpload,
     onAddShape,
-}: ToolbarViewProps) {
+}: TopToolbarProps) {
     return (
         <header className={styles.toolbar}>
             <div className={styles.logo}>
@@ -34,6 +40,19 @@ function TopToolbar({
                             <span className={styles.shapeName}>{shape.name}</span>
                         </button>
                     ))}
+                </div>
+            </div>
+
+            <div className={styles.toolbarSection}>
+                <div className={styles.simpleColorPicker}>
+                    <input
+                        type="color"
+                        value={selectedColor}
+                        onChange={(e) => onColorChange(e.target.value)}
+                        className={styles.colorInput}
+                        title="Выберите цвет для фигур"
+                    />
+                    <span className={styles.colorHex}>{selectedColor}</span>
                 </div>
             </div>
 
@@ -63,7 +82,7 @@ function TopToolbar({
                 <div className={styles.statusDot}></div>
                 <span className={styles.statusText}>
                     {selectedTool === 'rectangle' && 'Квадрат выбран'}
-                    {selectedTool === 'circle' && 'Круг выбран'}
+                    {selectedTool === 'triangle' && 'Треугольник выбран'}
                     {selectedTool === 'ellipse' && 'Эллипс выбран'}
                     {selectedTool === 'image' && 'Готов к загрузке'}
                 </span>
@@ -74,4 +93,5 @@ function TopToolbar({
 
 export {
     TopToolbar,
+    type TopToolbarProps,
 };

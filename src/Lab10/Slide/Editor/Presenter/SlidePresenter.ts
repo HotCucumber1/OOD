@@ -11,7 +11,7 @@ class SlidePresenter implements ObserverInterface {
     private view: SlideView;
     private selected: SlideComponentInterface[] = [];
     private canDrag = false;
-
+    private needGroup = false;
     private dragLastPosition: Point = {x: 0, y: 0};
 
     public constructor(
@@ -126,12 +126,22 @@ class SlidePresenter implements ObserverInterface {
         this.view.onRedoKeyDown(() => {
             this.model.redo();
         });
+
+        this.view.onCollectKeyDown(() => {
+            this.needGroup = true;
+        })
+
+        this.view.onCollectKeyUp(() => {
+            this.needGroup = false;
+        })
     }
 
     private handleSelection(x: number, y: number): void {
         const objects = this.getObjects();
 
-        this.selected = [];
+        if (!this.needGroup) {
+            this.selected = [];
+        }
 
         for (const object of objects.reverse()) {
             if (this.isObjectClicked(object, x, y) && !this.selected.includes(object)) {
@@ -139,8 +149,10 @@ class SlidePresenter implements ObserverInterface {
                 break;
             }
         }
+
         this.render();
     }
+    // TODO вынести useCase в отдельные классы
 
     private handleDrag(x: number, y: number): void {
         if (!this.canDrag) {

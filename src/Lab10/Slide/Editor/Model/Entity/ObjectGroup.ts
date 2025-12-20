@@ -1,33 +1,35 @@
 import {Frame} from "../../../Common/Common";
 import type {SlideComponentInterface} from "../Interface/SlideComponentInterface";
 import type {GroupInterface} from "../Interface/GroupInterface";
+import {AbstractSlideObject} from "./AbstractSlideObject";
 
-class ObjectGroup implements SlideComponentInterface, GroupInterface {
+function getFrameSize(components: SlideComponentInterface[]): Frame {
+    let minX = Infinity;
+    let minY = Infinity;
+    let maxX = -Infinity;
+    let maxY = -Infinity;
+
+    components.forEach(component => {
+        const frame = component.getFrame();
+
+        minX = Math.min(minX, frame.getTopLeft().x);
+        minY = Math.min(minY, frame.getTopLeft().y);
+        maxX = Math.max(maxX, frame.getBottomRight().x);
+        maxY = Math.max(maxY, frame.getBottomRight().y);
+    });
+
+    return new Frame(minX, minY, maxX, maxY)
+}
+
+class ObjectGroup extends AbstractSlideObject implements GroupInterface {
     public constructor(
         private components: SlideComponentInterface[],
     ) {
+        super(getFrameSize(components));
     }
 
     public addComponent(component: SlideComponentInterface): void {
         this.components.push(component);
-    }
-
-    public getFrame(): Frame {
-        let minX = Infinity;
-        let minY = Infinity;
-        let maxX = -Infinity;
-        let maxY = -Infinity;
-
-        this.components.forEach(component => {
-            const frame = component.getFrame();
-
-            minX = Math.min(minX, frame.getTopLeft().x);
-            minY = Math.min(minY, frame.getTopLeft().y);
-            maxX = Math.max(maxX, frame.getBottomRight().x);
-            maxY = Math.max(maxY, frame.getBottomRight().y);
-        });
-
-        return new Frame(minX, minY, maxX, maxY)
     }
 
     public setFrame(frame: Frame): void {
@@ -64,6 +66,9 @@ class ObjectGroup implements SlideComponentInterface, GroupInterface {
         return this;
     }
 
+    public clone(): SlideComponentInterface {
+        return this;
+    }
 }
 
 export {

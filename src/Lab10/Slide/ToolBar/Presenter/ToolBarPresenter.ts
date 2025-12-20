@@ -1,6 +1,6 @@
 import {ToolbarModel, type ToolType} from "../Model/ToolbarModel";
 
-interface ToolbarPresenterInterface {
+interface ToolbarPresenterInterface { // TODO убрать
     getViewProps(): ToolbarViewProps;
 
     handleShapeClick(shapeId: string): void;

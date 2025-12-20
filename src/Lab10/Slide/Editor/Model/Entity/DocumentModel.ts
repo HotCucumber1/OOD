@@ -13,6 +13,7 @@ import {ImageSave} from "../Service/ImageSave";
 import {ResizeObjectTask} from "../Task/ResizeObjectTask";
 import {DeleteObjectTask} from "../Task/DeleteObjectTask";
 import {MoveObjectTask} from "../Task/MoveObjectTask";
+import {AddGroupTask} from "../Task/AddGroupTask";
 
 class DocumentModel implements ObservableInterface {
     private observers: ObserverInterface[] = [];
@@ -76,6 +77,15 @@ class DocumentModel implements ObservableInterface {
         this.notifyObservers();
     }
 
+    public groupObjects(objectIds: string[]): void {
+        this.history.addAndExecuteCommand(
+            new AddGroupTask(
+                this.items,
+                objectIds,
+            ),
+        );
+    }
+
     public deleteObjects(objectsIds: string[]): void {
         this.history.addAndExecuteCommand(
             new DeleteObjectTask(
@@ -135,7 +145,7 @@ class DocumentModel implements ObservableInterface {
     public notifyObservers(): void {
         this.observers.forEach(observer => {
             observer.update(Array.from(this.items.values()));
-        })
+        });
     }
 
     public registerObserver(observer: ObserverInterface): void {

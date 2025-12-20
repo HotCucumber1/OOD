@@ -1,6 +1,6 @@
 import {Frame} from "../../../Common/Common";
 import type {SlideComponentInterface} from "../Interface/SlideComponentInterface";
-import {type ObjectGroup} from "./ObjectGroup";
+import type {GroupInterface} from "../Interface/GroupInterface";
 
 abstract class AbstractSlideObject implements SlideComponentInterface {
     protected constructor(
@@ -12,7 +12,7 @@ abstract class AbstractSlideObject implements SlideComponentInterface {
         return this.frame;
     }
 
-    public getGroup(): ObjectGroup | null {
+    public getGroup(): GroupInterface | null {
         return null;
     }
 

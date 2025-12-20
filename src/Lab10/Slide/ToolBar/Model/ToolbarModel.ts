@@ -9,9 +9,8 @@ interface Tool {
 class ToolbarModel {
     private tools: Tool[] = [
         {id: 'rectangle', name: 'Квадрат', icon: '■'},
-        {id: 'ellipse', name: 'Эллипс', icon: '○'},
-        {id: 'triangle', name: 'Треугольник', icon: '○'},
-        {id: 'image', name: 'Картинка', icon: '🖼️'}
+        {id: 'ellipse', name: 'Эллипс', icon: '●'},
+        {id: 'triangle', name: 'Треугольник', icon: '▲'},
     ];
 
     private selectedTool: ToolType = 'rectangle';

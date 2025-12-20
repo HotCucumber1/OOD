@@ -1,8 +1,6 @@
-/* src/App.module.css */
 .app {
     display: flex;
     flex-direction: column;
-    height: 100vh;
     background: #0f172a;
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
 }

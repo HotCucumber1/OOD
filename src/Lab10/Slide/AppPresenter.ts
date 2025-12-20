@@ -13,8 +13,7 @@ interface AppViewProps {
 }
 
 class AppPresenter {
-    private defaultColor: Color = {hex: '#FF603D'};
-    private slidePresenter: SlidePresenter;
+    private readonly slidePresenter: SlidePresenter;
     private toolbarPresenter: ToolbarPresenterInterface;
     private currentShapeType: ToolType = 'rectangle';
 
@@ -22,6 +21,7 @@ class AppPresenter {
         model: DocumentModel,
         canvas: string,
         private updateView: (props: AppViewProps) => void,
+        private currentColor: Color = {hex: '#FF603D'}
     ) {
         this.slidePresenter = new SlidePresenter(model, canvas);
         model.registerObserver(this.slidePresenter);
@@ -49,8 +49,6 @@ class AppPresenter {
     }
 
     private onAddShapeClicked(): void {
-        console.log(`Adding shape: ${this.currentShapeType}`);
-
         switch (this.currentShapeType) {
             case 'rectangle':
                 this.addRectangle();
@@ -68,19 +66,19 @@ class AppPresenter {
 
     private onShapeSelected(shapeId: ToolType): void {
         this.currentShapeType = shapeId;
-        console.log(`Shape selected: ${shapeId}`);
+        this.updateViewState()
     }
 
     public addRectangle(): void {
-        this.slidePresenter.addShape('rectangle', this.defaultColor);
+        this.slidePresenter.addShape('rectangle', this.currentColor);
     }
 
     public addTriangle(): void {
-        this.slidePresenter.addShape('triangle', this.defaultColor);
+        this.slidePresenter.addShape('triangle', this.currentColor);
     }
 
     public addEllipse(): void {
-        this.slidePresenter.addShape('ellipse', this.defaultColor);
+        this.slidePresenter.addShape('ellipse', this.currentColor);
     }
 
     private onImageLoaded(imagePath: string): void {
