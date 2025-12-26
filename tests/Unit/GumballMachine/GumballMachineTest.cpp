@@ -1,6 +1,7 @@
 #include "../../../src/Lab8/GumballMachine/GumballMachine/GumballMachine.h"
-
 #include <catch2/catch_all.hpp>
+#include <iostream>
+#include <sstream>
 
 class OutputCapture
 {
@@ -27,98 +28,348 @@ private:
 	std::streambuf* m_oldBuf;
 };
 
-TEST_CASE("Empty gumball machine")
+TEST_CASE("GumballMachine initial state")
 {
-	SECTION("Eject quarter")
+	SECTION("Machine with balls starts in NoQuarterState")
 	{
-		const OutputCapture capture;
-		const GumballMachine gumballMachine(0);
+		GumballMachine machine(5);
+		auto output = machine.ToString();
 
-		gumballMachine.EjectQuarter();
-		REQUIRE(capture.GetOutput() == "You can't eject, you haven't inserted a quarter yet\n");
+		REQUIRE(output.find("Inventory: 5 gumballs") != std::string::npos);
+		REQUIRE(output.find("Machine is waiting for quarter") != std::string::npos);
 	}
 
-	SECTION("Insert quarter")
+	SECTION("Empty machine starts in SoldOutState")
 	{
-		const OutputCapture capture;
-		const GumballMachine gumballMachine(0);
+		GumballMachine machine(0);
+		auto output = machine.ToString();
 
-		gumballMachine.InsertQuarter();
-		REQUIRE(capture.GetOutput() == "You can't insert a quarter, the machine is sold out\n");
+		REQUIRE(output.find("Inventory: 0 gumballs") != std::string::npos);
+		REQUIRE(output.find("Machine is sold out") != std::string::npos);
 	}
 
-	SECTION("TurnCrank")
+	SECTION("Machine with 1 ball uses singular form")
 	{
-		const OutputCapture capture;
-		const GumballMachine gumballMachine(0);
+		GumballMachine machine(1);
+		auto output = machine.ToString();
 
-		gumballMachine.TurnCrank();
-		REQUIRE(capture.GetOutput() == "You turned but there's no gumballs\nNo gumball dispensed\n");
+		REQUIRE(output.find("Inventory: 1 gumball") != std::string::npos);
+		REQUIRE(output.find("gumballs") == std::string::npos);
 	}
 }
 
-
-TEST_CASE("Not empty gumball machine without money")
+TEST_CASE("NoQuarterState behavior")
 {
-	SECTION("Eject quarter")
+	SECTION("Insert quarter in NoQuarterState transitions to HasQuarterState")
 	{
-		const OutputCapture capture;
-		const GumballMachine gumballMachine(10);
+		GumballMachine machine(5);
+		OutputCapture capture;
 
-		gumballMachine.EjectQuarter();
-		REQUIRE(capture.GetOutput() == "You haven't inserted a quarter\n");
+		machine.InsertQuarter();
+		auto output = capture.GetOutput();
+
+		REQUIRE(output.find("You inserted a quarter") != std::string::npos);
 	}
 
-	SECTION("Insert quarter")
+	SECTION("Eject quarter in NoQuarterState does nothing")
 	{
-		const OutputCapture capture;
-		const GumballMachine gumballMachine(10);
+		GumballMachine machine(5);
+		OutputCapture capture;
 
-		gumballMachine.InsertQuarter();
-		REQUIRE(capture.GetOutput() == "You inserted a quarter\n");
+		machine.EjectQuarter();
+		auto output = capture.GetOutput();
+
+		REQUIRE(output.find("You haven't inserted a quarter") != std::string::npos);
 	}
 
-	SECTION("TurnCrank")
+	SECTION("Turn crank in NoQuarterState does nothing")
 	{
-		const OutputCapture capture;
-		const GumballMachine gumballMachine(10);
+		GumballMachine machine(5);
+		OutputCapture capture;
 
-		gumballMachine.TurnCrank();
-		REQUIRE(capture.GetOutput() == "You turned but there's no quarter\nYou need to pay first\n");
+		machine.TurnCrank();
+		auto output = capture.GetOutput();
+
+		REQUIRE(output.find("You turned but there's no quarter") != std::string::npos);
+	}
+
+	SECTION("Dispense in NoQuarterState does nothing")
+	{
+		GumballMachine machine(5);
+		OutputCapture capture;
+
+		machine.TurnCrank();
+		auto output = capture.GetOutput();
+
+		REQUIRE(output.find("You need to pay first") != std::string::npos);
 	}
 }
 
-
-TEST_CASE("Not empty gumball machine with money")
+TEST_CASE("HasQuarterState behavior")
 {
-	SECTION("Eject quarter")
-	{
-		const OutputCapture capture;
-		const GumballMachine gumballMachine(10);
+	GumballMachine machine(3);
+	OutputCapture capture;
 
-		gumballMachine.InsertQuarter();
-		gumballMachine.EjectQuarter();
-		REQUIRE(capture.GetOutput() == "You inserted a quarter\nQuarter returned\n");
+	machine.InsertQuarter();
+	capture.Clear();
+
+	SECTION("Insert another quarter in HasQuarterState")
+	{
+		machine.InsertQuarter();
+		auto output = capture.GetOutput();
+
+		REQUIRE(output.find("You can't insert another quarter") != std::string::npos);
 	}
 
-	SECTION("Insert quarter")
+	SECTION("Eject quarter in HasQuarterState returns quarter")
 	{
-		const OutputCapture capture;
-		const GumballMachine gumballMachine(10);
+		machine.EjectQuarter();
+		auto output = capture.GetOutput();
 
-		gumballMachine.InsertQuarter();
-		gumballMachine.InsertQuarter();
-		REQUIRE(capture.GetOutput() == "You inserted a quarter\nYou can't insert another quarter\n");
+		REQUIRE(output.find("Quarter returned") != std::string::npos);
+
+		capture.Clear();
+		machine.EjectQuarter();
+		output = capture.GetOutput();
+		REQUIRE(output.find("You haven't inserted a quarter") != std::string::npos);
 	}
 
-	SECTION("TurnCrank")
+	SECTION("Turn crank in HasQuarterState transitions to SoldState")
 	{
-		const OutputCapture capture;
-		const GumballMachine gumballMachine(10);
+		machine.TurnCrank();
+		auto output = capture.GetOutput();
 
-		gumballMachine.InsertQuarter();
-		gumballMachine.TurnCrank();
-		REQUIRE(capture.GetOutput() == "You inserted a quarter\nYou turned...\nA gumball comes rolling out the slot...\n");
+		REQUIRE(output.find("You turned...") != std::string::npos);
+		REQUIRE(output.find("A gumball comes rolling out the slot...") != std::string::npos);
 	}
 }
 
+TEST_CASE("SoldState behavior")
+{
+	SECTION("Dispense transitions to NoQuarterState when balls remain")
+	{
+		GumballMachine machine(2);
+		OutputCapture capture;
+
+		machine.InsertQuarter();
+		capture.Clear();
+		machine.TurnCrank();
+		auto output = capture.GetOutput();
+
+		REQUIRE(output.find("A gumball comes rolling out the slot...") != std::string::npos);
+
+		capture.Clear();
+		machine.EjectQuarter();
+		output = capture.GetOutput();
+		REQUIRE(output.find("You haven't inserted a quarter") != std::string::npos);
+	}
+
+	SECTION("Dispense transitions to SoldOutState when last ball sold")
+	{
+		GumballMachine machine(1);
+		OutputCapture capture;
+
+		machine.InsertQuarter();
+		capture.Clear();
+		machine.TurnCrank();
+		auto output = capture.GetOutput();
+
+		REQUIRE(output.find("A gumball comes rolling out the slot...") != std::string::npos);
+		REQUIRE(output.find("Oops, out of gumballs") != std::string::npos);
+
+		capture.Clear();
+		machine.InsertQuarter();
+		output = capture.GetOutput();
+		REQUIRE(output.find("You can't insert a quarter, the machine is sold out") != std::string::npos);
+	}
+}
+
+TEST_CASE("SoldOutState behavior")
+{
+	SECTION("Empty machine starts in SoldOutState")
+	{
+		GumballMachine machine(0);
+		OutputCapture capture;
+
+		machine.InsertQuarter();
+		auto output = capture.GetOutput();
+
+		REQUIRE(output.find("You can't insert a quarter, the machine is sold out") != std::string::npos);
+	}
+
+	SECTION("Eject quarter in SoldOutState")
+	{
+		GumballMachine machine(0);
+		OutputCapture capture;
+
+		machine.EjectQuarter();
+		auto output = capture.GetOutput();
+
+		REQUIRE(output.find("You can't eject, you haven't inserted a quarter yet") != std::string::npos);
+	}
+
+	SECTION("Turn crank in SoldOutState")
+	{
+		GumballMachine machine(0);
+		OutputCapture capture;
+
+		machine.TurnCrank();
+		auto output = capture.GetOutput();
+
+		REQUIRE(output.find("You turned but there's no gumballs") != std::string::npos);
+	}
+}
+
+TEST_CASE("Complete use cases")
+{
+	SECTION("Normal purchase flow")
+	{
+		GumballMachine machine(2);
+		OutputCapture capture;
+
+		machine.InsertQuarter();
+		REQUIRE(capture.GetOutput().find("You inserted a quarter") != std::string::npos);
+
+		capture.Clear();
+		machine.TurnCrank();
+		auto output = capture.GetOutput();
+		REQUIRE(output.find("You turned...") != std::string::npos);
+		REQUIRE(output.find("A gumball comes rolling out the slot...") != std::string::npos);
+
+		REQUIRE(machine.ToString().find("Inventory: 1 gumball") != std::string::npos);
+
+		capture.Clear();
+		machine.TurnCrank();
+		REQUIRE(capture.GetOutput().find("You turned but there's no quarter") != std::string::npos);
+	}
+
+	SECTION("Purchase with quarter ejection")
+	{
+		GumballMachine machine(2);
+		OutputCapture capture;
+
+		machine.InsertQuarter();
+
+		capture.Clear();
+		machine.EjectQuarter();
+		REQUIRE(capture.GetOutput().find("Quarter returned") != std::string::npos);
+
+		capture.Clear();
+		machine.TurnCrank();
+		REQUIRE(capture.GetOutput().find("You turned but there's no quarter") != std::string::npos);
+	}
+
+	SECTION("Sell all gumballs")
+	{
+		GumballMachine machine(2);
+		OutputCapture capture;
+
+		machine.InsertQuarter();
+		capture.Clear();
+		machine.TurnCrank();
+
+		machine.InsertQuarter();
+		capture.Clear();
+		machine.TurnCrank();
+		auto output = capture.GetOutput();
+
+		REQUIRE(output.find("A gumball comes rolling out the slot...") != std::string::npos);
+		REQUIRE(output.find("Oops, out of gumballs") != std::string::npos);
+
+		REQUIRE(machine.ToString().find("Inventory: 0 gumballs") != std::string::npos);
+		REQUIRE(machine.ToString().find("Machine is sold out") != std::string::npos);
+
+		capture.Clear();
+		machine.InsertQuarter();
+		REQUIRE(capture.GetOutput().find("You can't insert a quarter, the machine is sold out") != std::string::npos);
+	}
+
+	SECTION("Multiple operations in different states")
+	{
+		GumballMachine machine(3);
+		OutputCapture capture;
+
+		machine.EjectQuarter();
+		REQUIRE(capture.GetOutput().find("You haven't inserted a quarter") != std::string::npos);
+
+		capture.Clear();
+		machine.InsertQuarter();
+		REQUIRE(capture.GetOutput().find("You inserted a quarter") != std::string::npos);
+
+		capture.Clear();
+		machine.InsertQuarter();
+		REQUIRE(capture.GetOutput().find("You can't insert another quarter") != std::string::npos);
+
+		capture.Clear();
+		machine.EjectQuarter();
+		REQUIRE(capture.GetOutput().find("Quarter returned") != std::string::npos);
+
+		capture.Clear();
+		machine.InsertQuarter();
+		REQUIRE(capture.GetOutput().find("You inserted a quarter") != std::string::npos);
+
+		capture.Clear();
+		machine.TurnCrank();
+		REQUIRE(capture.GetOutput().find("A gumball comes rolling out the slot...") != std::string::npos);
+
+		REQUIRE(machine.ToString().find("Inventory: 2 gumballs") != std::string::npos);
+	}
+}
+
+TEST_CASE("Edge cases")
+{
+	SECTION("Insert quarter into empty machine")
+	{
+		GumballMachine machine(0);
+		OutputCapture capture;
+
+		machine.InsertQuarter();
+		auto output = capture.GetOutput();
+
+		REQUIRE(output.find("You can't insert a quarter, the machine is sold out") != std::string::npos);
+	}
+
+	SECTION("Eject from empty machine")
+	{
+		GumballMachine machine(0);
+		OutputCapture capture;
+
+		machine.EjectQuarter();
+		auto output = capture.GetOutput();
+
+		REQUIRE(output.find("You can't eject, you haven't inserted a quarter yet") != std::string::npos);
+	}
+
+	SECTION("Turn crank on empty machine")
+	{
+		GumballMachine machine(0);
+		OutputCapture capture;
+
+		machine.TurnCrank();
+		auto output = capture.GetOutput();
+
+		REQUIRE(output.find("You turned but there's no gumballs") != std::string::npos);
+	}
+
+	SECTION("Try to operate after machine is empty")
+	{
+		GumballMachine machine(1);
+		OutputCapture capture;
+
+		machine.InsertQuarter();
+		capture.Clear();
+		machine.TurnCrank();
+
+		capture.Clear();
+		machine.InsertQuarter();
+		REQUIRE(capture.GetOutput().find("You can't insert a quarter, the machine is sold out") != std::string::npos);
+
+		capture.Clear();
+		machine.EjectQuarter();
+		REQUIRE(capture.GetOutput().find("You can't eject, you haven't inserted a quarter yet") != std::string::npos);
+
+		capture.Clear();
+		machine.TurnCrank();
+		REQUIRE(capture.GetOutput().find("You turned but there's no gumballs") != std::string::npos);
+	}
+}

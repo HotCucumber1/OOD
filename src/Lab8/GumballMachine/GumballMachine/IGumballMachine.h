@@ -15,11 +15,5 @@ public:
 
 	virtual void SetHasQuarterState() = 0;
 
-	virtual void SetMinQuarterState() = 0;
-
-	virtual void SetSomeQuarterState() = 0;
-
-	virtual void SetMaxQuarterState() = 0;
-
 	virtual ~IGumballMachine() = default;
 };
