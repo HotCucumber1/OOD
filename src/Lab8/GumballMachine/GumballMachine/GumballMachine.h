@@ -42,6 +42,11 @@ public:
 		m_currentState->Dispense();
 	}
 
+	void Refill(const unsigned count) const
+	{
+		m_currentState->Refill(count);
+	}
+
 	std::string ToString() const
 	{
 		return std::format(R"(
@@ -88,6 +93,12 @@ private:
 			--m_count;
 			--m_pennies;
 		}
+	}
+
+	void AddBalls(const unsigned count) override
+	{
+		m_count += count;
+		std::cout << "Machine refilled with " << count << " gumball(s). Total: " << m_count << "\n";
 	}
 
 	void RemoveAllQuarters() override

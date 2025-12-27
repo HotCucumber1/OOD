@@ -12,6 +12,8 @@ public:
 
 	virtual void Dispense() = 0;
 
+	virtual void Refill(unsigned count) = 0;
+
 	virtual std::string ToString() const = 0;
 
 	virtual ~IState() = default;

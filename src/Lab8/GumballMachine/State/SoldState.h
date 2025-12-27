@@ -64,6 +64,11 @@ public:
 		}
 	}
 
+	void Refill(unsigned count) override
+	{
+		std::cout << "Can't refill while dispensing a gumball\n";
+	}
+
 	std::string ToString() const override
 	{
 		return "delivering a gumball";

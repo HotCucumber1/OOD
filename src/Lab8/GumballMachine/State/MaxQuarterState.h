@@ -35,6 +35,14 @@ public:
 		std::cout << "No gumball dispensed\n";
 	}
 
+	void Refill(const unsigned count) override
+	{
+		if (count > 0)
+		{
+			m_gumballMachine.AddBalls(count);
+		}
+	}
+
 	std::string ToString() const override
 	{
 		return "waiting for turn of crank";

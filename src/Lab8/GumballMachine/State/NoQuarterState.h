@@ -41,6 +41,14 @@ public:
 		std::cout << "You need to pay first\n";
 	}
 
+	void Refill(const unsigned count) override
+	{
+		if (count > 0)
+		{
+			m_gumballMachine.AddBalls(count);
+		}
+	}
+
 	std::string ToString() const override
 	{
 		return "waiting for quarter";

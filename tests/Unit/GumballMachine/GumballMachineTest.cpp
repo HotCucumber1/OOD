@@ -451,3 +451,91 @@ TEST_CASE("Edge cases")
 		REQUIRE(machine.ToString().find("Inventory: 7 gumballs") != std::string::npos);
 	}
 }
+
+
+TEST_CASE("Refill functionality")
+{
+    SECTION("Refill empty machine")
+    {
+        GumballMachine machine(0);
+        OutputCapture capture;
+
+        machine.Refill(5);
+        auto output = capture.GetOutput();
+
+        REQUIRE(output.find("Machine refilled with 5 gumball(s)") != std::string::npos);
+        REQUIRE(machine.ToString().find("Inventory: 5 gumballs") != std::string::npos);
+        REQUIRE(machine.ToString().find("waiting for quarter") != std::string::npos);
+    }
+
+    SECTION("Refill machine with quarters")
+    {
+        GumballMachine machine(2);
+        OutputCapture capture;
+
+        machine.InsertQuarter();
+        machine.InsertQuarter();
+        machine.InsertQuarter();
+
+        capture.Clear();
+        machine.Refill(3);
+        auto output = capture.GetOutput();
+
+        REQUIRE(output.find("Machine refilled with 3 gumball(s)") != std::string::npos);
+    }
+
+    SECTION("Refill machine at max quarters")
+    {
+        GumballMachine machine(1);
+        OutputCapture capture;
+
+        for (int i = 0; i < 5; i++)
+        {
+            machine.InsertQuarter();
+        }
+
+        capture.Clear();
+        machine.Refill(4);
+        auto output = capture.GetOutput();
+
+        REQUIRE(output.find("Machine refilled with 4 gumball(s)") != std::string::npos);
+        REQUIRE(machine.ToString().find("Inventory: 5 gumballs") != std::string::npos);
+    }
+
+    SECTION("Cannot refill while dispensing")
+    {
+        GumballMachine machine(2);
+        OutputCapture capture;
+
+        machine.InsertQuarter();
+        machine.TurnCrank();
+
+        capture.Clear();
+        machine.Refill(3);
+        auto output = capture.GetOutput();
+
+        machine.TurnCrank();
+
+        REQUIRE(machine.ToString().find("waiting for quarter") != std::string::npos);
+    }
+
+    SECTION("Refill from sold out with quarters")
+    {
+        GumballMachine machine(1);
+        OutputCapture capture;
+
+        machine.InsertQuarter();
+        machine.InsertQuarter();
+        machine.InsertQuarter();
+        machine.TurnCrank();
+
+        REQUIRE(machine.ToString().find("Inventory: 0 gumballs") != std::string::npos);
+        REQUIRE(machine.ToString().find("sold out") != std::string::npos);
+
+        capture.Clear();
+        machine.Refill(5);
+        auto output = capture.GetOutput();
+
+        REQUIRE(output.find("Machine refilled with 5 gumball(s)") != std::string::npos);
+    }
+}

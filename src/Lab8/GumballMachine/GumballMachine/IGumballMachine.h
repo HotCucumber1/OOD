@@ -15,6 +15,8 @@ public:
 
 	virtual void RemoveOneQuarter() = 0;
 
+	virtual void AddBalls(unsigned count) = 0;
+
 	virtual void RemoveAllQuarters() = 0;
 
 	virtual void SetSoldOutState() = 0;

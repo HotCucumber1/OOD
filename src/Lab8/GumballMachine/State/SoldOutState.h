@@ -39,6 +39,30 @@ public:
 	{
 		std::cout << "No gumball dispensed\n";
 	}
+	void Refill(const unsigned count) override
+	{
+		if (count <= 0)
+		{
+			return;
+		}
+		m_gumballMachine.AddBalls(count);
+
+		if (m_gumballMachine.GetQuarterCount() > 0)
+		{
+			if (m_gumballMachine.GetQuarterCount() == m_gumballMachine.MAX_PENNIES)
+			{
+				m_gumballMachine.SetMaxQuartersState();
+			}
+			else
+			{
+				m_gumballMachine.SetHasQuarterState();
+			}
+		}
+		else
+		{
+			m_gumballMachine.SetNoQuarterState();
+		}
+	}
 
 	std::string ToString() const override
 	{
