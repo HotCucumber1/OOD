@@ -14,12 +14,25 @@ public:
 
 	void InsertQuarter() override
 	{
-		std::cout << "You can't insert another quarter\n";
+		if (m_gumballMachine.GetQuarterCount() >= m_gumballMachine.MAX_PENNIES)
+		{
+			std::cout << "You can't insert another quarter\n";
+			return;
+		}
+		m_gumballMachine.AddQuarter();
+		std::cout << "You inserted a quarter. Total quarters: "
+				  << m_gumballMachine.GetQuarterCount() << "\n";
+
+		if (m_gumballMachine.GetQuarterCount() == m_gumballMachine.MAX_PENNIES)
+		{
+			m_gumballMachine.SetMaxQuartersState();
+		}
 	}
 
 	void EjectQuarter() override
 	{
 		std::cout << "Quarter returned\n";
+		m_gumballMachine.RemoveAllQuarters();
 		m_gumballMachine.SetNoQuarterState();
 	}
 

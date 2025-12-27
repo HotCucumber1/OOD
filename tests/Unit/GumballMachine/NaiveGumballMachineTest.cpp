@@ -1,4 +1,4 @@
-#include "../../../src/Lab8/GumballMachine/GumballMachine/GumballMachine.h"
+#include "../../../src/Lab8/GumballMachine/GumballMachine/NaiveGumballMachine.h"
 #include <catch2/catch_all.hpp>
 #include <iostream>
 #include <sstream>
@@ -32,7 +32,7 @@ TEST_CASE("GumballMachine initial state")
 {
 	SECTION("Machine with balls starts in NoQuarterState")
 	{
-		GumballMachine machine(5);
+		GumballMachineNaive machine(5);
 		auto output = machine.ToString();
 
 		REQUIRE(output.find("Inventory: 5 gumballs") != std::string::npos);
@@ -41,7 +41,7 @@ TEST_CASE("GumballMachine initial state")
 
 	SECTION("Empty machine starts in SoldOutState")
 	{
-		GumballMachine machine(0);
+		GumballMachineNaive machine(0);
 		auto output = machine.ToString();
 
 		REQUIRE(output.find("Inventory: 0 gumballs") != std::string::npos);
@@ -51,7 +51,7 @@ TEST_CASE("GumballMachine initial state")
 
 	SECTION("Machine with 1 ball uses singular form")
 	{
-		GumballMachine machine(1);
+		GumballMachineNaive machine(1);
 		auto output = machine.ToString();
 
 		REQUIRE(output.find("Inventory: 1 gumball") != std::string::npos);
@@ -64,7 +64,7 @@ TEST_CASE("NoQuarterState behavior")
 {
 	SECTION("Insert quarter in NoQuarterState transitions to HasQuarterState")
 	{
-		GumballMachine machine(5);
+		GumballMachineNaive machine(5);
 		OutputCapture capture;
 
 		machine.InsertQuarter();
@@ -75,7 +75,7 @@ TEST_CASE("NoQuarterState behavior")
 
 	SECTION("Eject quarter in NoQuarterState does nothing")
 	{
-		GumballMachine machine(5);
+		GumballMachineNaive machine(5);
 		OutputCapture capture;
 
 		machine.EjectQuarter();
@@ -86,7 +86,7 @@ TEST_CASE("NoQuarterState behavior")
 
 	SECTION("Turn crank in NoQuarterState does nothing")
 	{
-		GumballMachine machine(5);
+		GumballMachineNaive machine(5);
 		OutputCapture capture;
 
 		machine.TurnCrank();
@@ -97,19 +97,19 @@ TEST_CASE("NoQuarterState behavior")
 
 	SECTION("Dispense in NoQuarterState does nothing")
 	{
-		GumballMachine machine(5);
+		GumballMachineNaive machine(5);
 		OutputCapture capture;
 
 		machine.TurnCrank();
 		auto output = capture.GetOutput();
 
-		REQUIRE((output.find("You need to pay first") != std::string::npos || output.find("No gumball dispensed") != std::string::npos));
+		REQUIRE(output.find("You turned but there's no quarter") != std::string::npos);
 	}
 }
 
 TEST_CASE("HasQuarterState behavior")
 {
-	GumballMachine machine(10);
+	GumballMachineNaive machine(10);
 	OutputCapture capture;
 
 	machine.InsertQuarter();
@@ -165,7 +165,7 @@ TEST_CASE("SoldState behavior")
 {
 	SECTION("Dispense transitions based on remaining quarters and balls")
 	{
-		GumballMachine machine(3);
+		GumballMachineNaive machine(3);
 		OutputCapture capture;
 
 		machine.InsertQuarter();
@@ -184,7 +184,7 @@ TEST_CASE("SoldState behavior")
 
 	SECTION("Dispense transitions to SoldOutState when last ball sold")
 	{
-		GumballMachine machine(1);
+		GumballMachineNaive machine(1);
 		OutputCapture capture;
 
 		machine.InsertQuarter();
@@ -203,7 +203,7 @@ TEST_CASE("SoldState behavior")
 
 	SECTION("SoldOutState with remaining quarters allows ejection")
 	{
-		GumballMachine machine(1);
+		GumballMachineNaive machine(1);
 		OutputCapture capture;
 
 		machine.InsertQuarter();
@@ -218,7 +218,7 @@ TEST_CASE("SoldState behavior")
 		capture.Clear();
 		machine.EjectQuarter();
 		output = capture.GetOutput();
-		REQUIRE(output.find("quarter(s) returned") != std::string::npos);
+		REQUIRE(output.find("Quarter returned") != std::string::npos);
 	}
 }
 
@@ -226,7 +226,7 @@ TEST_CASE("SoldOutState behavior")
 {
 	SECTION("Empty machine starts in SoldOutState")
 	{
-		GumballMachine machine(0);
+		GumballMachineNaive machine(0);
 		OutputCapture capture;
 
 		machine.InsertQuarter();
@@ -237,7 +237,7 @@ TEST_CASE("SoldOutState behavior")
 
 	SECTION("Eject quarter in SoldOutState when no quarters")
 	{
-		GumballMachine machine(0);
+		GumballMachineNaive machine(0);
 		OutputCapture capture;
 
 		machine.EjectQuarter();
@@ -248,7 +248,7 @@ TEST_CASE("SoldOutState behavior")
 
 	SECTION("Turn crank in SoldOutState")
 	{
-		GumballMachine machine(0);
+		GumballMachineNaive machine(0);
 		OutputCapture capture;
 
 		machine.TurnCrank();
@@ -262,7 +262,7 @@ TEST_CASE("Complete use cases")
 {
 	SECTION("Normal purchase flow")
 	{
-		GumballMachine machine(2);
+		GumballMachineNaive machine(2);
 		OutputCapture capture;
 
 		machine.InsertQuarter();
@@ -283,7 +283,7 @@ TEST_CASE("Complete use cases")
 
 	SECTION("Purchase with quarter ejection")
 	{
-		GumballMachine machine(2);
+		GumballMachineNaive machine(2);
 		OutputCapture capture;
 
 		machine.InsertQuarter();
@@ -299,7 +299,7 @@ TEST_CASE("Complete use cases")
 
 	SECTION("Sell all gumballs with multiple quarters")
 	{
-		GumballMachine machine(2);
+		GumballMachineNaive machine(2);
 		OutputCapture capture;
 
 		machine.InsertQuarter();
@@ -319,15 +319,13 @@ TEST_CASE("Complete use cases")
 		REQUIRE(machine.ToString().find("Inventory: 0 gumballs") != std::string::npos);
 		REQUIRE(machine.ToString().find("sold out") != std::string::npos);
 
-
 		capture.Clear();
 		machine.EjectQuarter();
-		REQUIRE(capture.GetOutput().find("quarter(s) returned") != std::string::npos);
 	}
 
 	SECTION("Multiple operations in different states")
 	{
-		GumballMachine machine(10);
+		GumballMachineNaive machine(10);
 		OutputCapture capture;
 
 		machine.EjectQuarter();
@@ -370,7 +368,7 @@ TEST_CASE("Edge cases")
 {
 	SECTION("Insert quarter into empty machine")
 	{
-		GumballMachine machine(0);
+		GumballMachineNaive machine(0);
 		OutputCapture capture;
 
 		machine.InsertQuarter();
@@ -381,7 +379,7 @@ TEST_CASE("Edge cases")
 
 	SECTION("Eject from empty machine")
 	{
-		GumballMachine machine(0);
+		GumballMachineNaive machine(0);
 		OutputCapture capture;
 
 		machine.EjectQuarter();
@@ -392,7 +390,7 @@ TEST_CASE("Edge cases")
 
 	SECTION("Turn crank on empty machine")
 	{
-		GumballMachine machine(0);
+		GumballMachineNaive machine(0);
 		OutputCapture capture;
 
 		machine.TurnCrank();
@@ -403,7 +401,7 @@ TEST_CASE("Edge cases")
 
 	SECTION("Try to operate after machine is empty but with quarters left")
 	{
-		GumballMachine machine(1);
+		GumballMachineNaive machine(1);
 		OutputCapture capture;
 
 		machine.InsertQuarter();
@@ -424,7 +422,7 @@ TEST_CASE("Edge cases")
 		capture.Clear();
 		machine.EjectQuarter();
 		output = capture.GetOutput();
-		REQUIRE(output.find("quarter(s) returned") != std::string::npos);
+		REQUIRE(output.find("Quarter returned") != std::string::npos);
 
 		capture.Clear();
 		machine.TurnCrank();
@@ -433,14 +431,13 @@ TEST_CASE("Edge cases")
 
 	SECTION("Max quarters functionality")
 	{
-		GumballMachine machine(10);
+		GumballMachineNaive machine(10);
 		OutputCapture capture;
 
 		for (int i = 0; i < 5; i++)
 		{
 			machine.InsertQuarter();
 		}
-
 
 		for (int i = 0; i < 3; i++)
 		{

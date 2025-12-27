@@ -59,13 +59,40 @@ private:
 		return m_count;
 	}
 
+	unsigned GetQuarterCount() const override
+	{
+		return m_pennies;
+	}
+
+	void AddQuarter() override
+	{
+		if (m_pennies < 5)
+		{
+			m_pennies++;
+		}
+	}
+
+	void RemoveOneQuarter() override
+	{
+		if (m_pennies > 0)
+		{
+			m_pennies--;
+		}
+	}
+
 	void ReleaseBall() override
 	{
 		if (m_count != 0)
 		{
 			std::cout << "A gumball comes rolling out the slot...\n";
 			--m_count;
+			--m_pennies;
 		}
+	}
+
+	void RemoveAllQuarters() override
+	{
+		m_pennies = 0;
 	}
 
 	void SetSoldOutState() override
@@ -88,22 +115,12 @@ private:
 		m_currentState.reset(new HasQuarterState(*this));
 	}
 
-	// void SetMinQuarterState() override
-	// {
-	// 	m_currentState.reset(new MinQuarterState(*this));
-	// }
-	//
-	// void SetSomeQuarterState() override
-	// {
-	// 	m_currentState.reset(new SomeQuarterState(*this));
-	// }
-	//
-	// void SetMaxQuarterState() override
-	// {
-	// 	m_currentState.reset(new MaxQuarterState(*this));
-	// }
+	void SetMaxQuartersState() override
+	{
+		m_currentState.reset(new MaxQuarterState(*this));
+	}
 
 	unsigned m_count = 0;
-	unsigned m_pennys = 0;
+	unsigned m_pennies = 0;
 	std::unique_ptr<IState> m_currentState;
 };

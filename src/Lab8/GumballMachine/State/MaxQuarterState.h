@@ -19,8 +19,9 @@ public:
 
 	void EjectQuarter() override
 	{
-		std::cout << "Quarter returned\n";
-		m_gumballMachine.SetNoQuarterState(); // TODO подумоть
+		std::cout << "5 quarters returned\n";
+		m_gumballMachine.RemoveAllQuarters();
+		m_gumballMachine.SetNoQuarterState();
 	}
 
 	void TurnCrank() override

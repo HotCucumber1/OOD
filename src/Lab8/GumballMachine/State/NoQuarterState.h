@@ -15,7 +15,15 @@ public:
 	void InsertQuarter() override
 	{
 		std::cout << "You inserted a quarter\n";
-		m_gumballMachine.SetHasQuarterState();
+		m_gumballMachine.AddQuarter();
+		if (m_gumballMachine.GetQuarterCount() == m_gumballMachine.MAX_PENNIES)
+		{
+			m_gumballMachine.SetMaxQuartersState();
+		}
+		else
+		{
+			m_gumballMachine.SetHasQuarterState();
+		}
 	}
 
 	void EjectQuarter() override

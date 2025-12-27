@@ -30,14 +30,37 @@ public:
 	void Dispense() override
 	{
 		m_gumballMachine.ReleaseBall();
-		if (m_gumballMachine.GetBallCount() == 0)
+
+		if (m_gumballMachine.GetBallCount() > 0)
 		{
-			std::cout << "Oops, out of gumballs\n";
-			m_gumballMachine.SetSoldOutState();
+			if (m_gumballMachine.GetQuarterCount() > 0)
+			{
+				if (m_gumballMachine.GetQuarterCount() == m_gumballMachine.MAX_PENNIES)
+				{
+					m_gumballMachine.SetMaxQuartersState();
+				}
+				else
+				{
+					m_gumballMachine.SetHasQuarterState();
+				}
+			}
+			else
+			{
+				m_gumballMachine.SetNoQuarterState();
+			}
 		}
 		else
 		{
-			m_gumballMachine.SetNoQuarterState();
+			std::cout << "Oops, out of gumballs!\n";
+			if (m_gumballMachine.GetQuarterCount() > 0)
+			{
+				std::cout << "You can eject your remaining quarters\n";
+				m_gumballMachine.SetSoldOutState();
+			}
+			else
+			{
+				m_gumballMachine.SetSoldOutState();
+			}
 		}
 	}
 

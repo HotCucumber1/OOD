@@ -19,7 +19,15 @@ public:
 
 	void EjectQuarter() override
 	{
-		std::cout << "You can't eject, you haven't inserted a quarter yet\n";
+		if (m_gumballMachine.GetQuarterCount() > 0)
+		{
+			std::cout << m_gumballMachine.GetQuarterCount() << " quarter(s) returned\n";
+			m_gumballMachine.RemoveAllQuarters();
+		}
+		else
+		{
+			std::cout << "You can't eject, you haven't inserted a quarter yet\n";
+		}
 	}
 
 	void TurnCrank() override
