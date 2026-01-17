@@ -1,15 +1,5 @@
 import {ToolbarModel, type ToolType} from "../Model/ToolbarModel";
 
-interface ToolbarPresenterInterface { // TODO убрать
-    getViewProps(): ToolbarViewProps;
-
-    handleShapeClick(shapeId: string): void;
-
-    handleAddShape(): void;
-
-    handleImageUpload(): Promise<string | null>;
-}
-
 type ToolbarViewProps = {
     tools: {
         id: string;
@@ -22,7 +12,7 @@ type ToolbarViewProps = {
     onAddShape: () => void;
 }
 
-class ToolbarPresenter implements ToolbarPresenterInterface {
+class ToolbarPresenter {
     private model: ToolbarModel;
     private readonly onShapeSelect?: (shapeId: ToolType) => void;
     private readonly onAddShape?: () => void;
@@ -107,7 +97,6 @@ class ToolbarPresenter implements ToolbarPresenterInterface {
 }
 
 export {
-    type ToolbarPresenterInterface,
     type ToolbarViewProps,
     ToolbarPresenter,
 };

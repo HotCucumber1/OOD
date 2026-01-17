@@ -8,7 +8,7 @@ public:
 
 	virtual void EjectQuarter() = 0;
 
-	virtual void TurnCrank() = 0;
+	virtual void TurnCrank() = 0; // TODO дописать проверки на переполнение монеток
 
 	virtual void Dispense() = 0;
 

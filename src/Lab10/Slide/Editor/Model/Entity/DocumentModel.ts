@@ -16,6 +16,9 @@ import {MoveObjectTask} from "../Task/MoveObjectTask";
 import {AddGroupTask} from "../Task/AddGroupTask";
 
 class DocumentModel implements ObservableInterface {
+    public static WIDTH = 2000;
+    public static HEIGHT = 840;
+
     private observers: ObserverInterface[] = [];
     private items = new Map<string, SlideComponentInterface>();
     private history = new History();
@@ -110,10 +113,12 @@ class DocumentModel implements ObservableInterface {
 
     public changeObjectPosition(objectId: string, newX: number, newY: number): void {
         const object = this.getObject(objectId);
+        const [x, y] = this.clampCoords(object, newX, newY);
+
         this.history.addAndExecuteCommand(
             new MoveObjectTask(
                 object,
-                {x: newX, y: newY},
+                {x: x, y: y},
             ),
         );
         this.notifyObservers();
@@ -162,6 +167,25 @@ class DocumentModel implements ObservableInterface {
             throw new Error(`Object with id ${objectId} not found`);
         }
         return object;
+    }
+
+    private clampCoords(object: SlideComponentInterface, newX: number, newY: number): [number, number] {
+        let clampedX = newX;
+        let clampedY = newY;
+        if (newX <= 0) {
+            clampedX = 0;
+        }
+        if (newX + object.getFrame().getWidth() >= DocumentModel.WIDTH) {
+            clampedX = DocumentModel.WIDTH - object.getFrame().getWidth();
+        }
+
+        if (newY <= 0) {
+            clampedY = 0;
+        }
+        if (newY + object.getFrame().getHeight() >= DocumentModel.HEIGHT) {
+            clampedY = DocumentModel.HEIGHT - object.getFrame().getHeight();
+        }
+        return [clampedX, clampedY];
     }
 }
 

@@ -97,11 +97,8 @@ class SlidePresenter implements ObserverInterface {
     }
 
     private setupViewListeners(): void {
-        this.view.onObjectClick((x: number, y: number) => {
-            this.handleSelection(x, y);
-        });
-
         this.view.onMouseDown((x: number, y: number) => {
+            this.handleSelection(x, y);
             this.canDrag = true;
             this.dragLastPosition = {x: x, y: y};
         });
@@ -195,7 +192,6 @@ class SlidePresenter implements ObserverInterface {
 
     private isObjectClicked(object: SlideComponentInterface, x: number, y: number): boolean {
         const frame = object.getFrame();
-        // TODO логика нажатия
 
         return frame.getTopLeft().x <= x && x <= frame.getBottomRight().x &&
             frame.getTopLeft().y <= y && y <= frame.getBottomRight().y;

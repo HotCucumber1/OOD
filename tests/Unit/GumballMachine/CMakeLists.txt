@@ -1,3 +1,5 @@
 add_executable(TestGumballMachine GumballMachineTest.cpp)
+add_executable(TestNaiveGumballMachine NaiveGumballMachineTest.cpp)
 
 target_link_libraries(TestGumballMachine PRIVATE Catch2::Catch2WithMain)
+target_link_libraries(TestNaiveGumballMachine PRIVATE Catch2::Catch2WithMain)

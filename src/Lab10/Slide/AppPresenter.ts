@@ -1,7 +1,6 @@
 import {SlidePresenter} from "./Editor/Presenter/SlidePresenter";
 import {
     ToolbarPresenter,
-    type ToolbarPresenterInterface,
     type ToolbarViewProps
 } from "./ToolBar/Presenter/ToolBarPresenter";
 import type {DocumentModel} from "./Editor/Model/Entity/DocumentModel";
@@ -14,7 +13,7 @@ interface AppViewProps {
 
 class AppPresenter {
     private readonly slidePresenter: SlidePresenter;
-    private toolbarPresenter: ToolbarPresenterInterface;
+    private toolbarPresenter: ToolbarPresenter;
     private currentShapeType: ToolType = 'rectangle';
 
     public constructor(

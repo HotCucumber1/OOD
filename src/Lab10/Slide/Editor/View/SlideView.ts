@@ -5,10 +5,9 @@ import {AbstractShape} from "../Model/Entity/AbstractShape";
 import {Ellipse} from "../Model/Entity/Ellipse";
 import {Triangle} from "../Model/Entity/Triangle";
 import {Image} from "../Model/Entity/Image";
+import {DocumentModel} from "../Model/Entity/DocumentModel";
 
 class SlideView {
-    private WIDTH = 2000;
-    private HEIGHT = 840;
     private BORDER_COLOR = '#00f';
     private RESIZE_HANDLE_SIZE = 8;
 
@@ -24,8 +23,8 @@ class SlideView {
             throw new Error(`Canvas element with id "${canvasId}" not found`);
         }
         this.canvas = element;
-        this.canvas.width = this.WIDTH;
-        this.canvas.height = this.HEIGHT;
+        this.canvas.width = DocumentModel.WIDTH;
+        this.canvas.height = DocumentModel.HEIGHT;
 
         const ctx = this.canvas.getContext('2d');
         if (!ctx) {
@@ -35,7 +34,7 @@ class SlideView {
     }
 
     public renderObjects(objects: SlideComponentInterface[]): void {
-        this.context.clearRect(0, 0, this.WIDTH, this.HEIGHT);
+        this.context.clearRect(0, 0, DocumentModel.WIDTH, DocumentModel.HEIGHT);
 
         objects.forEach((object) => {
             if (object instanceof AbstractShape) {
@@ -62,26 +61,25 @@ class SlideView {
         });
     }
 
-    public onObjectClick(callback: (x: number, y: number) => void): void {
-        this.canvas.addEventListener('click', (event) => {
-            this.executeAction(event, callback);
-        });
-    }
     // TODO пропадает select у второй фигуры после ctrl + DND
+
     // TODO сделать так, чтобы фигуры при мультиселекете не уезжали за границу
+
     // TODO history на удаление группы объектов
 
     public onMouseDown(callback: (x: number, y: number) => void): void {
         this.canvas.addEventListener('mousedown', (event) => {
             this.executeAction(event, callback);
         });
-        // TODO тут тоже селект и ловить на окне
+        // TODO D&D не заканчивается при отжатии за слайдом
+
+        // TODO тут тоже селект
     }
 
     public onMouseMove(callback: (x: number, y: number) => void): void {
         this.canvas.addEventListener('mousemove', (event) => {
             this.executeAction(event, callback);
-        }); // TODO чекать, где клик, коммитт толкьо конечного состояния
+        }); // TODO чекать, где клик, коммит только конечного состояния
     }
 
     public onMouseUp(callback: (x: number, y: number) => void): void {
